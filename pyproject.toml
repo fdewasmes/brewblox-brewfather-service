@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "YOUR-PACKAGE"
+name = "brewblox-brewfather-service"
 version = "0.1.0"
-description = "ADD DESCRIPTION HERE"
-authors = ["Code Fairies Inc <noreply@santa.com>"]
+description = "This services intends to communicate with a brewfather account to fetech recipe and drive brewsparl automation on a brew day."
+authors = ["Fabrice Dewasmes <fabrice.dewasmes@gmail.com>"]
 license = "GPL-3.0"
 readme = "README.md"
 

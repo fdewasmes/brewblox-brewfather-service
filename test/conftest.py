@@ -9,7 +9,7 @@ import logging
 import pytest
 from brewblox_service import service
 
-from YOUR_PACKAGE.__main__ import create_parser
+from brewblox_brewfather_service.__main__ import create_parser
 
 
 @pytest.fixture(scope='session', autouse=True)

@@ -19,8 +19,8 @@ ENV SERVICE_INFO=${service_info}
 
 COPY --from=base /wheeley /wheeley
 
-RUN pip3 install --no-index --find-links=/wheeley YOUR-PACKAGE \
+RUN pip3 install --no-index --find-links=/wheeley brewblox_brewfather_service \
     && rm -rf /wheeley \
     && pip3 freeze
 
-ENTRYPOINT ["python3", "-m", "YOUR_PACKAGE"]
+ENTRYPOINT ["python3", "-m", "brewblox_brewfather_service"]

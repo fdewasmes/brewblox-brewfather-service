@@ -8,7 +8,7 @@ from aresponses import ResponsesMockServer
 from brewblox_service import http, repeater, scheduler
 from mock import AsyncMock
 
-from YOUR_PACKAGE import publish_example
+from brewblox_brewfather_service import publish_example
 
 TESTED = publish_example.__name__
 

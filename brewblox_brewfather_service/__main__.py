@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 
 from brewblox_service import brewblox_logger, http, mqtt, scheduler, service
 
-from YOUR_PACKAGE import http_example, publish_example, subscribe_example
+from brewblox_brewfather_service import http_example, publish_example, subscribe_example
 
 LOGGER = brewblox_logger(__name__)
 
