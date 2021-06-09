@@ -1,0 +1,75 @@
+pool:
+  vmImage: 'Ubuntu-20.04'
+
+trigger:
+  tags:
+    include:
+      - "*"
+  branches:
+    include:
+      - refs/heads/*
+
+pr:
+  branches:
+    include:
+      - '*'
+
+variables:
+  # Variables imported from brewblox group:
+  # DOCKER_USER
+  # DOCKER_PASSWORD
+  - group: brewblox
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    addToPath: true
+    versionSpec: '3.7'
+    architecture: 'x64'
+
+- bash: |
+    set -o allexport; source .env; set +o allexport
+    echo "##vso[task.setvariable variable=DOCKER_REPO]$DOCKER_REPO"
+  displayName: Export .env variables
+
+- bash: |
+    BRANCH=$(echo $(Build.SourceBranch) | grep -oP "^refs/heads/\K.*")
+    TAG=$(echo $BRANCH | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+    echo "##vso[task.setvariable variable=BRANCH]$BRANCH"
+    echo "##vso[task.setvariable variable=TAG]$TAG"
+  displayName: Export build variables
+
+- bash: |
+    pip install poetry
+    poetry install
+  displayName: Install dependencies
+
+- bash: |
+    poetry run pytest
+  displayName: Run Pytest
+
+- bash: |
+    curl -fsSL https://raw.githubusercontent.com/BrewBlox/deployed-images/develop/prepare_buildx.sh | bash
+  displayName: Prepare buildx
+  condition: and(succeeded(), variables.BRANCH)
+
+- bash: |
+    echo $(DOCKER_PASSWORD) | docker login -u $(DOCKER_USER) --password-stdin
+  displayName: Docker login
+  condition: and(succeeded(), variables.BRANCH)
+
+- bash: |
+    bash ./before_build.sh
+  displayName: Run before_build.sh script
+  workingDirectory: docker
+  condition: and(succeeded(), variables.BRANCH)
+
+- bash: >-
+    docker buildx build
+    --tag $(DOCKER_REPO):$(TAG)
+    --build-arg service_info="$(git describe) @ $(date)"
+    --push
+    --platform linux/amd64,linux/arm/v7,linux/arm64/v8
+    docker
+  displayName: Build Docker image
+  condition: and(succeeded(), variables['BRANCH'])
