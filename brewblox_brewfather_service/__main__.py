@@ -17,10 +17,12 @@ def create_parser(default_name='brewblox_brewfather_service') -> ArgumentParser:
     group = parser.add_argument_group('Brewfather broker config')
     group.add_argument('--brewfather-user-id',
                        help='Brewfather userid. [%(default)s]',
-                       default='ouistiti')
-    group.add_argument('--brewfather-user-id',
+                       type=str,
+                       default='')
+    group.add_argument('--brewfather-token',
                        help='Brewfather token [%(default)s]',
-                       default='111')
+                       type=str,
+                       default='')
 
     return parser
 
