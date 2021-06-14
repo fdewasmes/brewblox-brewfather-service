@@ -23,7 +23,8 @@ def log_enabled():
 @pytest.fixture
 def app_config() -> dict:
     return {
-        'poll_interval': 5,
+        'brewfather-user-id': 'useridtest',
+        'brewfather-token': 'tokentest',
     }
 
 
@@ -31,7 +32,8 @@ def app_config() -> dict:
 def sys_args(app_config) -> list:
     return [str(v) for v in [
         'app_name',
-        '--poll-interval', app_config['poll_interval'],
+        '--brewfather-user-id', app_config['brewfather-user-id'],
+        '--brewfather-token', app_config['brewfather-token'],
     ]]
 
 
