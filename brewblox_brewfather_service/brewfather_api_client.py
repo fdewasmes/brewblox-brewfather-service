@@ -1,6 +1,7 @@
 """
 A Brewfather API client
 """
+from os import getenv
 
 from aiohttp import web, BasicAuth
 from brewblox_service import brewblox_logger, features, http
@@ -10,18 +11,15 @@ LOGGER = brewblox_logger(__name__)
 
 class BrewfatherFeature(features.ServiceFeature):
 
-    async def prepare(self):
-
+    async def startup(self, app: web.Application):
         LOGGER.info(f'Starting {self}')
 
         # Get values from config
         LOGGER.info(self.app['config'])
-        self.userid = self.app['config']['brewfather_user_id']
-        self.token = self.app['config']['brewfather_token']
-        self.bfclient = BrewfatherClient(self.userid, self.token, self.app)
 
-    async def startup(self, app: web.Application):
-        """ do nothing yet"""
+        self.userid = getenv('BREWFATHER_USER_ID')
+        self.token = getenv('BREWFATHER_TOKEN')
+        self.bfclient = BrewfatherClient(self.userid, self.token, self.app)
 
     async def shutdown(self, app: web.Application):
         """ do nothing yet"""

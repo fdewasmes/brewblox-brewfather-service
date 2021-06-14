@@ -1,7 +1,7 @@
 """
 Checks whether we can call the hello endpoint.
 """
-import logging
+
 import pytest
 
 from brewblox_service import http, service
@@ -12,27 +12,14 @@ from brewblox_brewfather_service.__main__ import create_parser
 TESTED = brewfather_api_client.__name__
 
 
-@pytest.fixture(scope='session', autouse=True)
-def log_enabled():
-    """Sets log level to DEBUG for all test functions.
-    Allows all logged messages to be captured during pytest runs"""
-    logging.getLogger().setLevel(logging.DEBUG)
-    logging.captureWarnings(True)
-
-
 @pytest.fixture
 async def app(app):
     app = service.create_app(parser=create_parser())
-    app['config']['brewfather_user_id'] = 'user'
-    app['config']['brewfather_token'] = 'token'
-    app['config']['brewfather_user_id'] = '***REMOVED***'
-    app['config']['brewfather_token'] = '***REMOVED***'
 
     http.setup(app)
     brewfather_api_client.setup(app)
     feature = brewfather_api_client.fget(app)
-
-    await feature.prepare()
+    await feature.startup(app)
     return app
 
 

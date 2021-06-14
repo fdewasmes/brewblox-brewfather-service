@@ -3,13 +3,18 @@ Master file for pytest fixtures.
 Any fixtures declared here are available to all test functions in this directory.
 """
 
-
+import os
 import logging
 
 import pytest
 from brewblox_service import service
 
 from brewblox_brewfather_service.__main__ import create_parser
+
+TEMP_ENV_VARS = {
+    'BREWFATHER_USER_ID': 'user',
+    'BREWFATHER_TOKEN': 'token',
+}
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -20,11 +25,22 @@ def log_enabled():
     logging.captureWarnings(True)
 
 
+@pytest.fixture(scope='session', autouse=True)
+def environment():
+    # Will be executed before the first test
+    old_environ = dict(os.environ)
+    os.environ.update(TEMP_ENV_VARS)
+
+    yield
+    # Will be executed after the last test
+    os.environ.clear()
+    os.environ.update(old_environ)
+
+
 @pytest.fixture
 def app_config() -> dict:
     return {
-        'brewfather-user-id': 'useridtest',
-        'brewfather-token': 'tokentest',
+
     }
 
 
@@ -32,8 +48,6 @@ def app_config() -> dict:
 def sys_args(app_config) -> list:
     return [str(v) for v in [
         'app_name',
-        '--brewfather-user-id', app_config['brewfather-user-id'],
-        '--brewfather-token', app_config['brewfather-token'],
     ]]
 
 
