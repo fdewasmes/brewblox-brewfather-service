@@ -19,14 +19,26 @@ class DeviceSchema(Schema):
     service_id = fields.String(Required=True)
     id = fields.String(Required=True)
 
+    @post_load
+    def make_device(self, data, **kwargs):
+        return datastore.Device(**data)
+
 
 class MashSettingsSchema(Schema):
     setpointDevice = fields.Nested(DeviceSchema, Required=True)
-    tempSensor = fields.Nested(DeviceSchema, Required=True)
+    temp_sensor = fields.Nested(DeviceSchema, Required=True)
+
+    @post_load
+    def make_mashautomation_settings(self, data, **kwargs):
+        return datastore.MashAutomation(**data)
 
 
 class SettingsSchema(Schema):
     mashAutomation = fields.Nested(MashSettingsSchema, Required=True)
+
+    @post_load
+    def make_settings(self, data, **kwargs):
+        return datastore.Settings(**data)
 
 
 class MashStepSchema(Schema):
@@ -56,11 +68,19 @@ class CurrentStateSchema(Schema):
     automation = fields.String(Required=True, validate=OneOf(['mash', 'boil', 'sparge', 'fermentation']))
     step = fields.Int(Required=True)
 
+    @post_load
+    def make_current_state(self, data, **kwargs):
+        return datastore.CurrentState(**data)
+
 
 class ConfigurationDatastoreSchema(Schema):
     settings = fields.Nested(SettingsSchema, Required=True)
-    currentState = fields.Nested(CurrentStateSchema, Required=False)
+    current_state = fields.Nested(CurrentStateSchema, Required=True)
     mash = fields.Nested(MashSchema, Required=False)
+
+    @post_load
+    def make_configuration(self, data, **kwargs):
+        return datastore.ConfigurationDatastore(**data)
 
 
 if __name__ == '__main__':

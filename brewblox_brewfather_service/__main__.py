@@ -1,7 +1,7 @@
 """
 Example of how to import and use the brewblox service
 """
-
+from os import getenv
 from argparse import ArgumentParser
 
 from brewblox_service import brewblox_logger, http, mqtt, scheduler, service
@@ -20,6 +20,8 @@ def create_parser(default_name='brewfather') -> ArgumentParser:
 def main():
 
     app = service.create_app(parser=create_parser())
+    app['BREWFATHER_USER_ID'] = getenv('BREWFATHER_USER_ID')
+    app['BREWFATHER_TOKEN'] = getenv('BREWFATHER_TOKEN')
 
     scheduler.setup(app)
     mqtt.setup(app)
