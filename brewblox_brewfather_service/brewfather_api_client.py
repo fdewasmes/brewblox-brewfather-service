@@ -1,20 +1,18 @@
 """
 A Brewfather API client
 """
-from os import getenv
 
-import json
 
-from aiohttp import web, BasicAuth
+from aiohttp import web
 from aiohttp_apispec import docs
-from brewblox_service import brewblox_logger, features, http, mqtt
-from brewblox_brewfather_service import datastore, schemas
+from brewblox_service import brewblox_logger, features, mqtt
+from brewblox_brewfather_service.datastore import ConfigurationDatastore, Device, MashAutomation, CurrentState, Settings, DatastoreClient
+from brewblox_brewfather_service import schemas
+from brewblox_brewfather_service.api.brewfather_api_client import BrewfatherClient
+from brewblox_brewfather_service.api.spark_api_client import SparkServiceClient
 
 LOGGER = brewblox_logger(__name__)
 
-userid = getenv('BREWFATHER_USER_ID')
-token = getenv('BREWFATHER_TOKEN')
-bfclient = None
 routes = web.RouteTableDef()
 
 
@@ -26,15 +24,13 @@ class BrewfatherFeature(features.ServiceFeature):
         # Get values from config
         LOGGER.info(self.app['config'])
 
-        self.userid = getenv('BREWFATHER_USER_ID')
-        self.token = getenv('BREWFATHER_TOKEN')
-        self.bfclient = BrewfatherClient(self.userid, self.token, self.app)
+        self.bfclient = BrewfatherClient(self.app)
         self.spark_client = SparkServiceClient(self.app)
         self.datastore_client = DatastoreClient(self.app)
 
         # TODO get these from service configuration
-        self.setpoint_device = datastore.Device('spark-one', 'HERMS MT Setpoint')
-        self.temp_device = datastore.Device('spark-one', 'HERMS MT Sensor')
+        self.setpoint_device = Device('spark-one', 'HERMS MT Setpoint')
+        self.temp_device = Device('spark-one', 'HERMS MT Sensor')
 
         await mqtt.listen(app, 'brewcast/history/#', self.on_message)
         await mqtt.subscribe(app, 'brewcast/history/#')
@@ -60,27 +56,34 @@ class BrewfatherFeature(features.ServiceFeature):
         if number_of_steps == 0:
             raise ValueError
 
-        configuration = datastore.ConfigurationDatastore(
-            datastore.Settings(datastore.MashAutomation(self.setpoint_device, self.temp_device)),
-            datastore.CurrentState('mash', -1),
+        configuration = ConfigurationDatastore(
+            Settings(MashAutomation(self.setpoint_device, self.temp_device)),
+            CurrentState('mash', -1),
             mash)
 
-        self.datastore_client.store_configuration(configuration)
+        await self.datastore_client.store_configuration(configuration)
 
-    async def start_automated_mash(self, recipe_id: str):
-        configuration = self.datastore_client.load_configuration()
+    async def start_automated_mash(self):
+        configuration = await self.datastore_client.load_configuration()
+        LOGGER.info(f'loaded configuration: {configuration}')
+
+        LOGGER.info(f'current state: {configuration.current_state}')
         current_step = configuration.current_state.step
+
         current_step += 1
         try:
+
             target_temp = configuration.mash.steps[current_step].stepTemp
+            LOGGER.info(target_temp)
             await self.adjust_mash_setpoint(target_temp)
             configuration.current_state.step = current_step
-            self.datastore_client.store_configuration(configuration)
+            LOGGER.info(f'current state: {configuration.current_state}')
+            await self.datastore_client.store_configuration(configuration)
         except IndexError:
             LOGGER.warn('current recipe has no mash steps')
 
     async def adjust_mash_setpoint(self, target_temp):
-        obj = {'serviceId': self.setpoint_device.serviceId, 'id': self.setpoint_device.id}
+        obj = {'serviceId': self.setpoint_device.service_id, 'id': self.setpoint_device.id}
         block = await self.spark_client.read_block(obj)
         block['data']['storedSetting'] = target_temp
         data = await self.spark_client.patch_block(block)
@@ -92,7 +95,7 @@ class BrewfatherFeature(features.ServiceFeature):
         return mash_data
 
     async def on_message(self, topic: str, message: dict):
-        configuration = self.datastore_client.load_configuration()
+        configuration = await self.datastore_client.load_configuration()
         step = configuration.current_state.step
         try:
             mash_step = configuration.mash.steps[step]
@@ -103,122 +106,17 @@ class BrewfatherFeature(features.ServiceFeature):
             LOGGER.warn('attempting to reach mash step whil it does not exist')
 
 
-class BrewfatherClient:
-    BREWFATHER_HOST = 'https://api.brewfather.app'
-    BREWFATHER_API_VERSION = '/v1'
-    BASE_URL = BREWFATHER_HOST + BREWFATHER_API_VERSION
-
-    def __init__(self, user_id, token, app):
-        self.userid = user_id
-        self.token = token
-        self.app = app
-
-    async def recipes(self) -> list:
-        url = self.BASE_URL + '/recipes'
-        session = http.session(self.app)
-        response = await session.get(url, auth=BasicAuth(self.userid, self.token))
-        all_recipes = await response.json()
-        return all_recipes
-
-    async def recipe(self, recipe_id: str) -> dict:
-        url = self.BASE_URL + '/recipes' + '/' + recipe_id
-        session = http.session(self.app)
-        response = await session.get(url, auth=BasicAuth(self.userid, self.token))
-        recipe = await response.json()
-        return recipe
-
-
-class MashStep:
-    def __init__(self, brewfather_step: dict):
-        self._target_temp = brewfather_step['stepTemp']
-        self._target_temp_unit = 'degC'
-        self._duration = brewfather_step['stepTime']
-        self.set_next_step(None)
-
-    def set_next_step(self, next_step):
-        self._next_step = next_step
-
-
-class SparkServiceClient:
-    # TODO properly handle host and service
-    SPARK_HOST = '192.168.178.192'
-    SPARK_SERVICE = 'spark-one'
-    SPARK_BLOCKS_API_PATH = 'blocks'
-    SPARK_API_BASE_URL = f'http://{SPARK_HOST}/{SPARK_SERVICE}/{SPARK_BLOCKS_API_PATH}'
-
-    def __init__(self, app):
-        self.app = app
-
-    async def read_blocks(self) -> list:
-        session = http.session(self.app)
-        response = await session.post(f'{self.SPARK_API_BASE_URL}/all/read')
-        block_list = await response.json()
-        return block_list
-
-    async def read_block(self, obj: dict) -> dict:
-        session = http.session(self.app)
-        response = await session.post(f'{self.SPARK_API_BASE_URL}/read', data=obj)
-        block = await response.json()
-        return block
-
-    async def patch_block(self, obj: dict) -> dict:
-        session = http.session(self.app)
-        response = await session.post(
-            f'{self.SPARK_API_BASE_URL}/patch',
-            json=obj)
-        block = await response.json()
-        return block
-
-
-class DatastoreClient:
-    # TODO properly handle host and service
-    SPARK_HOST = '192.168.178.192'
-    DATASTORE_SERVICE = '/history/datastore'
-    SET_API_PATH = '/set'
-    GET_API_PATH = '/get'
-    DATASTORE_API_BASE_URL = f'http://{SPARK_HOST}/{DATASTORE_SERVICE}'
-
-    def __init__(self, app):
-        self.app = app
-
-    async def store_configuration(self, configuration: datastore.ConfigurationDatastore):
-        """ store mash steps in datastore for later use """
-        session = http.session(self.app)
-        url = f'{self.DATASTORE_API_BASE_URL}{self.SET_API_PATH}'
-        schema = schemas.ConfigurationDatastoreSchema()
-        configuration_dump = schema.dump(configuration)
-
-        # TODO generate an id?
-        payload = {'value': {'namespace': 'brewfather', 'id': '1', 'configuration': configuration_dump}}
-        response = await session.post(url, json=payload)
-
-        await response.json()
-
-    async def load_configuration(self) -> datastore.ConfigurationDatastore:
-        """ load current configuration from store """
-        session = http.session(self.app)
-        url = f'{self.DATASTORE_API_BASE_URL}{self.GET_API_PATH}'
-
-        payload = {'value': {'namespace': 'brewfather', 'id': '1'}}
-        response = await session.post(url, json=payload)
-        configuration_data = await response.json()
-        schema = schemas.ConfigurationDatastoreSchema()
-        schema.validate(configuration_data)
-        configuration = schema.load(configuration_data)
-        return configuration
-
-
 @docs(
     tags=['Brewfather'],
     summary='fetch recipes',
 )
 @routes.get('/recipes')
-async def get_recipes(request: web.Request) -> web.Response:
-    recipes = await bfclient.recipes()
+async def get_recipes(request: web.Request) -> web.json_response:
+    recipes = await BrewfatherClient(request.app).recipes()
     recipes_name_list = []
     for recipe in recipes:
         recipes_name_list.append({'id': recipe['_id'], 'name': recipe['name']})
-    return web.Response(body=json.dumps(recipes_name_list))
+    return web.json_response(recipes_name_list)
 
 
 @docs(
@@ -226,17 +124,38 @@ async def get_recipes(request: web.Request) -> web.Response:
     summary='fetch one recipe',
 )
 @routes.get('/recipe/{recipe_id}')
-async def get_recipe(request: web.Request) -> web.Response:
-    recipe = await bfclient.recipe(request.match_info['recipe_id'])
-    return web.Response(body=json.dumps(recipe))
+async def get_recipe(request: web.Request) -> web.json_response:
+    recipe = await BrewfatherClient(request.app).recipe(request.match_info['recipe_id'])
+    return web.json_response(recipe)
+
+
+@docs(
+    tags=['Brewfather'],
+    summary='start mash automation',
+)
+@routes.get('/startmash')
+async def start_mash_automation(request: web.Request) -> web.json_response:
+    LOGGER.info('starting mash')
+    feature = fget(request.app)
+    await feature.start_automated_mash()
+    return web.json_response()
+
+
+@docs(
+    tags=['Brewfather'],
+    summary='load recipe',
+)
+@routes.get('/recipe/{recipe_id}/load')
+async def load_recipe(request: web.Request) -> web.json_response:
+    LOGGER.info(f'loading recipe {request.match_info["recipe_id"]}')
+    feature = fget(request.app)
+    LOGGER.info(feature)
+
+    await feature.load_recipe(request.match_info['recipe_id'])
+    return web.json_response()
 
 
 def setup(app: web.Application):
-    # TODO is there a better way instead of crapy global variable?
-    global userid
-    global token
-    global bfclient
-    bfclient = BrewfatherClient(userid, token, app)
     app.router.add_routes(routes)
     # We register our feature here
     # It will now be automatically started when the service starts
