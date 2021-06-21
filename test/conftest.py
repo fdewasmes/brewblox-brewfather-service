@@ -12,8 +12,8 @@ from brewblox_service import service
 from brewblox_brewfather_service.__main__ import create_parser
 
 TEMP_ENV_VARS = {
-    'BREWFATHER_USER_ID': 'user',
-    'BREWFATHER_TOKEN': 'token',
+    'BREWFATHER_USER_ID': '***REMOVED***',
+    'BREWFATHER_TOKEN': '***REMOVED***',
 }
 
 

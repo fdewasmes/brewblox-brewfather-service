@@ -4,7 +4,7 @@ Checks whether we can call the hello endpoint.
 
 import pytest
 
-from brewblox_service import http, service
+from brewblox_service import http, service, mqtt
 from brewblox_brewfather_service import brewfather_api_client
 from aresponses import ResponsesMockServer
 from brewblox_brewfather_service.__main__ import create_parser
@@ -17,6 +17,7 @@ async def app(app):
     app = service.create_app(parser=create_parser())
 
     http.setup(app)
+    mqtt.setup(app)
     brewfather_api_client.setup(app)
     feature = brewfather_api_client.fget(app)
     await feature.startup(app)
@@ -54,7 +55,8 @@ async def test_getrecipes(app, client, aresponses: ResponsesMockServer):
     aresponses.assert_plan_strictly_followed()
 
 
-async def test_getrecipe(app, client):
+async def test_start_automated_mash(app, client):
     feature = brewfather_api_client.fget(app)
+    await feature.start_automated_mash('wbM4VL9qLjCMAvrg2aM8V3BtDq0yHX')
 
-    await feature.get_mash_steps('MuBxiHOBDXru6BcYavJKrGZ9aUmQTo')
+
