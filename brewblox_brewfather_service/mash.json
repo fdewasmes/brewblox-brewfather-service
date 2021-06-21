@@ -1,0 +1,40 @@
+{
+    "mash": {
+        "name": "Protein rest plus beta- and alpha- amylase rests",
+        "steps": [
+            {
+                "stepTemp": 50,
+                "rampTime": null,
+                "stepTime": 45,
+                "type": "Temperature",
+                "name": "Protein",
+                "displayStepTemp": 50
+            },
+            {
+                "name": "Saccharification 1",
+                "stepTemp": 64,
+                "rampTime": null,
+                "type": "Temperature",
+                "displayStepTemp": "64",
+                "stepTime": 60
+            },
+            {
+                "type": "Temperature",
+                "rampTime": null,
+                "stepTemp": 72,
+                "displayStepTemp": "72",
+                "stepTime": 20,
+                "name": "Saccharification 2"
+            },
+            {
+                "rampTime": null,
+                "displayStepTemp": "77",
+                "type": "Temperature",
+                "stepTemp": 77,
+                "name": "Mash Out",
+                "stepTime": 15
+            }
+        ],
+        "_id": "default-pr-baar"
+    }
+}

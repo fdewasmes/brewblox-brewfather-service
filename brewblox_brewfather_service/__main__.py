@@ -11,18 +11,8 @@ from brewblox_brewfather_service import brewfather_api_client
 LOGGER = brewblox_logger(__name__)
 
 
-def create_parser(default_name='brewblox_brewfather_service') -> ArgumentParser:
+def create_parser(default_name='brewfather') -> ArgumentParser:
     parser: ArgumentParser = service.create_parser(default_name=default_name)
-
-    group = parser.add_argument_group('Brewfather broker config')
-    group.add_argument('--brewfather-user-id',
-                       help='Brewfather userid. [%(default)s]',
-                       type=str,
-                       default='')
-    group.add_argument('--brewfather-token',
-                       help='Brewfather token [%(default)s]',
-                       type=str,
-                       default='')
 
     return parser
 
