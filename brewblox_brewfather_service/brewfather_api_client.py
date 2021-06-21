@@ -163,11 +163,9 @@ class SparkServiceClient:
 
     async def patch_block(self, obj: dict) -> dict:
         session = http.session(self.app)
-        payload = json.dumps(obj)
         response = await session.post(
             f'{self.SPARK_API_BASE_URL}/patch',
-            data=payload,
-            headers={'Content-Type': 'application/json'})
+            json=obj)
         block = await response.json()
         return block
 
@@ -191,9 +189,9 @@ class DatastoreClient:
         configuration_dump = schema.dump(configuration)
 
         # TODO generate an id?
-        payload = json.dumps({'value': {'namespace': 'brewfather', 'id': '1', 'configuration': configuration_dump}})
-        LOGGER.info(payload)
-        response = await session.post(url, data=payload, headers={'Content-Type': 'application/json'})
+        payload = {'value': {'namespace': 'brewfather', 'id': '1', 'configuration': configuration_dump}}
+        response = await session.post(url, json=payload)
+
         await response.json()
 
     async def load_configuration(self) -> datastore.ConfigurationDatastore:
@@ -201,9 +199,8 @@ class DatastoreClient:
         session = http.session(self.app)
         url = f'{self.DATASTORE_API_BASE_URL}{self.GET_API_PATH}'
 
-        payload = json.dumps({'value': {'namespace': 'brewfather', 'id': '1'}})
-        LOGGER.info(payload)
-        response = await session.post(url, data=payload, headers={'Content-Type': 'application/json'})
+        payload = {'value': {'namespace': 'brewfather', 'id': '1'}}
+        response = await session.post(url, json=payload)
         configuration_data = await response.json()
         schema = schemas.ConfigurationDatastoreSchema()
         schema.validate(configuration_data)
@@ -220,7 +217,7 @@ async def get_recipes(request: web.Request) -> web.Response:
     recipes = await bfclient.recipes()
     recipes_name_list = []
     for recipe in recipes:
-        recipes_name_list.append({'id': recipe['_id'], 'name':recipe['name']})
+        recipes_name_list.append({'id': recipe['_id'], 'name': recipe['name']})
     return web.Response(body=json.dumps(recipes_name_list))
 
 
