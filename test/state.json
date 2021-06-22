@@ -1,0 +1,1262 @@
+{
+    "key": "spark-one",
+    "type": "Spark.state",
+    "data": {
+        "status": {
+            "device_address": "brewblox-arm32.sim",
+            "connection_kind": "simulation",
+            "service_info": {
+                "firmware_version": "ec544231",
+                "proto_version": "695cdbf1",
+                "firmware_date": "2021-03-09 13:45:00 +0100",
+                "proto_date": "2020-10-08 17:35:19 +0200",
+                "device_id": "123456789012345678901234",
+                "name": "spark-one"
+            },
+            "device_info": {
+                "firmware_version": "ec544231",
+                "proto_version": "695cdbf1",
+                "firmware_date": "2021-03-09",
+                "proto_date": "2020-10-08",
+                "device_id": "123456789012345678901234",
+                "system_version": "2.0.1",
+                "platform": "gcc",
+                "reset_reason": "NONE"
+            },
+            "handshake_info": {
+                "is_compatible_firmware": true,
+                "is_latest_firmware": true,
+                "is_valid_device_id": true
+            },
+            "is_autoconnecting": true,
+            "is_connected": true,
+            "is_acknowledged": true,
+            "is_synchronized": true,
+            "is_updating": false
+        },
+        "blocks": [
+            {
+                "nid": 1,
+                "groups": [
+                    7
+                ],
+                "type": "Groups",
+                "data": {
+                    "active": [
+                        0,
+                        7
+                    ]
+                },
+                "id": "ActiveGroups",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 2,
+                "groups": [
+                    7
+                ],
+                "type": "SysInfo",
+                "data": {
+                    "deviceId": "123456789012345678901234",
+                    "version": "ec544231",
+                    "platform": "PLATFORM_GCC",
+                    "protocolVersion": "695cdbf1",
+                    "releaseDate": "2021-03-09",
+                    "protocolDate": "2020-10-08",
+                    "command": "SYS_CMD_NONE",
+                    "trace": []
+                },
+                "id": "SystemInfo",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 3,
+                "groups": [
+                    7
+                ],
+                "type": "Ticks",
+                "data": {
+                    "millisSinceBoot": 6070186,
+                    "secondsSinceEpoch": 1624344245,
+                    "avgBlocksUpdateTask": 0.3125,
+                    "avgSystemTask": 0.03125,
+                    "avgCommunicationTask": 0.0,
+                    "avgDisplayTask": 0.0
+                },
+                "id": "SystemTime",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 4,
+                "groups": [
+                    7
+                ],
+                "type": "OneWireBus",
+                "data": {
+                    "address": []
+                },
+                "id": "OneWireBus",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 5,
+                "groups": [
+                    7
+                ],
+                "type": "WiFiSettings",
+                "data": {
+                    "signal": 2,
+                    "ip": "0.0.0.0",
+                    "ssid": "",
+                    "password": "",
+                    "security": "WLAN_SEC_UNSEC",
+                    "cipher": "WLAN_CIPHER_NOT_SET"
+                },
+                "id": "WiFiSettings",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 6,
+                "groups": [
+                    7
+                ],
+                "type": "TouchSettings",
+                "data": {
+                    "calibrated": "CALIBRATED_YES",
+                    "xBitsPerPixelX16": 64,
+                    "yBitsPerPixelX16": 64,
+                    "xOffset": 0,
+                    "yOffset": 0
+                },
+                "id": "TouchSettings",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 7,
+                "groups": [
+                    7
+                ],
+                "type": "DisplaySettings",
+                "data": {
+                    "widgets": [
+                        {
+                            "pos": 3,
+                            "color": "c48600",
+                            "name": "BK PID",
+                            "pid": {
+                                "__bloxtype": "Link",
+                                "type": "Pid",
+                                "id": "HERMS BK PID"
+                            }
+                        },
+                        {
+                            "pos": 2,
+                            "color": "9c4b00",
+                            "name": "MT PID",
+                            "pid": {
+                                "__bloxtype": "Link",
+                                "type": "Pid",
+                                "id": "HERMS MT PID"
+                            }
+                        },
+                        {
+                            "pos": 1,
+                            "color": "b50000",
+                            "name": "HLT PID",
+                            "pid": {
+                                "__bloxtype": "Link",
+                                "type": "Pid",
+                                "id": "HERMS HLT PID"
+                            }
+                        }
+                    ],
+                    "name": "",
+                    "tempUnit": "TEMP_CELSIUS",
+                    "brightness": 0
+                },
+                "id": "DisplaySettings",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 19,
+                "groups": [
+                    7
+                ],
+                "type": "Spark3Pins",
+                "data": {
+                    "pins": [
+                        {
+                            "top1": {
+                                "config": "CHANNEL_ACTIVE_LOW",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "top2": {
+                                "config": "CHANNEL_ACTIVE_LOW",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "top3": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "bottom1": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "bottom2": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        }
+                    ],
+                    "enableIoSupply5V": true,
+                    "enableIoSupply12V": true,
+                    "voltage5": 5.0,
+                    "voltage12": 12.0,
+                    "soundAlarm": false
+                },
+                "id": "SparkPins",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 100,
+                "groups": [
+                    0
+                ],
+                "type": "TempSensorOneWire",
+                "data": {
+                    "value": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 20.0
+                    },
+                    "address": "28222222222222de",
+                    "offset": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "value": 0.0
+                    }
+                },
+                "id": "New|TempSensorOneWire-1",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 101,
+                "groups": [
+                    0
+                ],
+                "type": "TempSensorOneWire",
+                "data": {
+                    "value": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 20.0
+                    },
+                    "address": "281111111111117e",
+                    "offset": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "value": 0.0
+                    }
+                },
+                "id": "New|TempSensorOneWire-2",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 102,
+                "groups": [
+                    0
+                ],
+                "type": "TempSensorOneWire",
+                "data": {
+                    "value": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 20.0
+                    },
+                    "address": "28333333333333be",
+                    "offset": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "value": 0.0
+                    }
+                },
+                "id": "New|TempSensorOneWire-3",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 103,
+                "groups": [
+                    0
+                ],
+                "type": "DS2413",
+                "data": {
+                    "address": "3a44444444444406",
+                    "connected": true,
+                    "pins": [
+                        {
+                            "A": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "B": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        }
+                    ]
+                },
+                "id": "New|DS2413-1",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 104,
+                "groups": [
+                    0
+                ],
+                "type": "DS2408",
+                "data": {
+                    "address": "29555555555555da",
+                    "connected": true,
+                    "pins": [
+                        {
+                            "A": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "B": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "C": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "D": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "E": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "F": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "G": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "H": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        }
+                    ],
+                    "connectMode": "CONNECT_VALVE"
+                },
+                "id": "New|DS2408-1",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 105,
+                "groups": [
+                    0
+                ],
+                "type": "TempSensorMock",
+                "data": {
+                    "value": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 78.0
+                    },
+                    "connected": true,
+                    "setting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "value": 78.0
+                    },
+                    "fluctuations": []
+                },
+                "id": "HERMS HLT Sensor",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 106,
+                "groups": [
+                    0
+                ],
+                "type": "TempSensorMock",
+                "data": {
+                    "value": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 60.0
+                    },
+                    "connected": true,
+                    "setting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "value": 60.0
+                    },
+                    "fluctuations": []
+                },
+                "id": "HERMS MT Sensor",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 107,
+                "groups": [
+                    0
+                ],
+                "type": "TempSensorMock",
+                "data": {
+                    "value": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 100.0
+                    },
+                    "connected": true,
+                    "setting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "value": 100.0
+                    },
+                    "fluctuations": []
+                },
+                "id": "HERMS BK Sensor",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 108,
+                "groups": [
+                    0
+                ],
+                "type": "Balancer",
+                "data": {
+                    "clients": [
+                        {
+                            "id": 1,
+                            "granted": 37.5,
+                            "requested": 0.0
+                        },
+                        {
+                            "id": 2,
+                            "requested": 25.0,
+                            "granted": 62.5
+                        }
+                    ]
+                },
+                "id": "HERMS Balancer",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 109,
+                "groups": [
+                    0
+                ],
+                "type": "Mutex",
+                "data": {
+                    "differentActuatorWait": {
+                        "__bloxtype": "Quantity",
+                        "unit": "second",
+                        "value": 0.0
+                    },
+                    "waitRemaining": {
+                        "__bloxtype": "Quantity",
+                        "unit": "second",
+                        "readonly": true,
+                        "value": 0.0
+                    }
+                },
+                "id": "HERMS Mutex",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 110,
+                "groups": [
+                    0
+                ],
+                "type": "SetpointSensorPair",
+                "data": {
+                    "sensorId": {
+                        "__bloxtype": "Link",
+                        "type": "TempSensorInterface",
+                        "id": "HERMS HLT Sensor"
+                    },
+                    "setting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 34.9501953125
+                    },
+                    "value": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 78.0
+                    },
+                    "settingEnabled": true,
+                    "storedSetting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "value": 34.9501953125
+                    },
+                    "filter": "FILTER_15s",
+                    "filterThreshold": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "value": 5.0
+                    },
+                    "valueUnfiltered": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 78.0
+                    },
+                    "resetFilter": false
+                },
+                "id": "HERMS HLT Setpoint",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 111,
+                "groups": [
+                    0
+                ],
+                "type": "SetpointSensorPair",
+                "data": {
+                    "sensorId": {
+                        "__bloxtype": "Link",
+                        "type": "TempSensorInterface",
+                        "id": "HERMS MT Sensor"
+                    },
+                    "setting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 50.0
+                    },
+                    "value": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 60.0
+                    },
+                    "settingEnabled": true,
+                    "storedSetting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "value": 50.0
+                    },
+                    "filter": "FILTER_15s",
+                    "filterThreshold": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "value": 5.0
+                    },
+                    "valueUnfiltered": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 60.0
+                    },
+                    "resetFilter": false
+                },
+                "id": "HERMS MT Setpoint",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 112,
+                "groups": [
+                    0
+                ],
+                "type": "SetpointSensorPair",
+                "data": {
+                    "sensorId": {
+                        "__bloxtype": "Link",
+                        "type": "TempSensorInterface",
+                        "id": "HERMS BK Sensor"
+                    },
+                    "setting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 100.0
+                    },
+                    "value": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 100.0
+                    },
+                    "settingEnabled": true,
+                    "storedSetting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "value": 100.0
+                    },
+                    "filter": "FILTER_15s",
+                    "filterThreshold": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "value": 5.0
+                    },
+                    "valueUnfiltered": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 100.0
+                    },
+                    "resetFilter": false
+                },
+                "id": "HERMS BK Setpoint",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 113,
+                "groups": [
+                    0
+                ],
+                "type": "ActuatorOffset",
+                "data": {
+                    "targetId": {
+                        "__bloxtype": "Link",
+                        "type": "ProcessValueInterface",
+                        "id": "HERMS HLT Setpoint"
+                    },
+                    "referenceId": {
+                        "__bloxtype": "Link",
+                        "type": "ProcessValueInterface",
+                        "id": "HERMS MT Setpoint"
+                    },
+                    "setting": -15.0498046875,
+                    "value": 28.0,
+                    "constrainedBy": {
+                        "constraints": [
+                            {
+                                "max": 10.0,
+                                "limiting": false
+                            }
+                        ]
+                    },
+                    "drivenTargetId": {
+                        "__bloxtype": "Link",
+                        "type": "ProcessValueInterface",
+                        "driven": true,
+                        "id": "HERMS HLT Setpoint"
+                    },
+                    "enabled": true,
+                    "desiredSetting": -15.0498046875,
+                    "referenceSettingOrValue": "REF_SETTING"
+                },
+                "id": "HERMS HLT Setpoint Driver",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 114,
+                "groups": [
+                    0
+                ],
+                "type": "DigitalActuator",
+                "data": {
+                    "hwDevice": {
+                        "__bloxtype": "Link",
+                        "type": "IoArrayInterface",
+                        "driven": true,
+                        "id": "SparkPins"
+                    },
+                    "channel": 1,
+                    "constrainedBy": {
+                        "constraints": [
+                            {
+                                "mutexed": {
+                                    "mutexId": {
+                                        "__bloxtype": "Link",
+                                        "type": "MutexInterface",
+                                        "id": "HERMS Mutex"
+                                    },
+                                    "hasCustomHoldTime": true,
+                                    "extraHoldTime": {
+                                        "__bloxtype": "Quantity",
+                                        "unit": "second",
+                                        "value": 0.0
+                                    },
+                                    "hasLock": false
+                                },
+                                "remaining": {
+                                    "__bloxtype": "Quantity",
+                                    "unit": "second",
+                                    "readonly": true,
+                                    "value": 0.0
+                                }
+                            }
+                        ]
+                    },
+                    "state": "STATE_INACTIVE",
+                    "invert": false,
+                    "desiredState": "STATE_INACTIVE"
+                },
+                "id": "HERMS HLT Actuator",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 115,
+                "groups": [
+                    0
+                ],
+                "type": "DigitalActuator",
+                "data": {
+                    "hwDevice": {
+                        "__bloxtype": "Link",
+                        "type": "IoArrayInterface",
+                        "driven": true,
+                        "id": "SparkPins"
+                    },
+                    "channel": 2,
+                    "constrainedBy": {
+                        "constraints": [
+                            {
+                                "mutexed": {
+                                    "mutexId": {
+                                        "__bloxtype": "Link",
+                                        "type": "MutexInterface",
+                                        "id": "HERMS Mutex"
+                                    },
+                                    "hasCustomHoldTime": true,
+                                    "extraHoldTime": {
+                                        "__bloxtype": "Quantity",
+                                        "unit": "second",
+                                        "value": 0.0
+                                    },
+                                    "hasLock": false
+                                },
+                                "remaining": {
+                                    "__bloxtype": "Quantity",
+                                    "unit": "second",
+                                    "readonly": true,
+                                    "value": 0.0
+                                }
+                            }
+                        ]
+                    },
+                    "state": "STATE_INACTIVE",
+                    "invert": false,
+                    "desiredState": "STATE_INACTIVE"
+                },
+                "id": "HERMS BK Actuator",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 116,
+                "groups": [
+                    0
+                ],
+                "type": "ActuatorPwm",
+                "data": {
+                    "actuatorId": {
+                        "__bloxtype": "Link",
+                        "type": "ActuatorDigitalInterface",
+                        "id": "HERMS HLT Actuator"
+                    },
+                    "period": {
+                        "__bloxtype": "Quantity",
+                        "unit": "second",
+                        "value": 2.0
+                    },
+                    "constrainedBy": {
+                        "constraints": [
+                            {
+                                "balanced": {
+                                    "balancerId": {
+                                        "__bloxtype": "Link",
+                                        "type": "BalancerInterface",
+                                        "id": "HERMS Balancer"
+                                    },
+                                    "granted": 37.5,
+                                    "id": 1
+                                },
+                                "limiting": false
+                            }
+                        ]
+                    },
+                    "drivenActuatorId": {
+                        "__bloxtype": "Link",
+                        "type": "ActuatorDigitalInterface",
+                        "driven": true,
+                        "id": "HERMS HLT Actuator"
+                    },
+                    "enabled": true,
+                    "setting": 0.0,
+                    "value": 0.0,
+                    "desiredSetting": 0.0
+                },
+                "id": "HERMS HLT PWM",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 117,
+                "groups": [
+                    0
+                ],
+                "type": "ActuatorPwm",
+                "data": {
+                    "actuatorId": {
+                        "__bloxtype": "Link",
+                        "type": "ActuatorDigitalInterface",
+                        "id": "HERMS BK Actuator"
+                    },
+                    "period": {
+                        "__bloxtype": "Quantity",
+                        "unit": "second",
+                        "value": 2.0
+                    },
+                    "setting": 25.0,
+                    "value": 25.10595703125,
+                    "constrainedBy": {
+                        "constraints": [
+                            {
+                                "balanced": {
+                                    "balancerId": {
+                                        "__bloxtype": "Link",
+                                        "type": "BalancerInterface",
+                                        "id": "HERMS Balancer"
+                                    },
+                                    "granted": 62.5,
+                                    "id": 2
+                                },
+                                "limiting": false
+                            }
+                        ]
+                    },
+                    "drivenActuatorId": {
+                        "__bloxtype": "Link",
+                        "type": "ActuatorDigitalInterface",
+                        "driven": true,
+                        "id": "HERMS BK Actuator"
+                    },
+                    "enabled": true,
+                    "desiredSetting": 25.0
+                },
+                "id": "HERMS BK PWM",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 118,
+                "groups": [
+                    0
+                ],
+                "type": "Pid",
+                "data": {
+                    "inputId": {
+                        "__bloxtype": "Link",
+                        "type": "SetpointSensorPairInterface",
+                        "id": "HERMS HLT Setpoint"
+                    },
+                    "outputId": {
+                        "__bloxtype": "Link",
+                        "type": "ActuatorAnalogInterface",
+                        "id": "HERMS HLT PWM"
+                    },
+                    "inputValue": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 78.0
+                    },
+                    "inputSetting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 34.9501953125
+                    },
+                    "enabled": true,
+                    "active": true,
+                    "kp": {
+                        "__bloxtype": "Quantity",
+                        "unit": "1 / degC",
+                        "value": 50.0
+                    },
+                    "ti": {
+                        "__bloxtype": "Quantity",
+                        "unit": "second",
+                        "value": 600
+                    },
+                    "td": {
+                        "__bloxtype": "Quantity",
+                        "unit": "second",
+                        "value": 10
+                    },
+                    "p": -2047.999755859375,
+                    "i": -3.4130859375,
+                    "error": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "readonly": true,
+                        "value": -43.0498046875
+                    },
+                    "drivenOutputId": {
+                        "__bloxtype": "Link",
+                        "type": "ActuatorAnalogInterface",
+                        "driven": true,
+                        "id": "HERMS HLT PWM"
+                    },
+                    "boilMinOutput": 25.0,
+                    "derivativeFilter": "FILTER_15s",
+                    "outputValue": 0.0,
+                    "outputSetting": 0.0,
+                    "d": 0.0,
+                    "integral": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC * hour",
+                        "readonly": true,
+                        "value": 0.0
+                    },
+                    "derivative": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC / minute",
+                        "readonly": true,
+                        "value": 0.0
+                    },
+                    "integralReset": 0.0,
+                    "boilPointAdjust": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "value": 0.0
+                    },
+                    "boilModeActive": false
+                },
+                "id": "HERMS HLT PID",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 119,
+                "groups": [
+                    0
+                ],
+                "type": "Pid",
+                "data": {
+                    "inputId": {
+                        "__bloxtype": "Link",
+                        "type": "SetpointSensorPairInterface",
+                        "id": "HERMS MT Setpoint"
+                    },
+                    "outputId": {
+                        "__bloxtype": "Link",
+                        "type": "ActuatorAnalogInterface",
+                        "id": "HERMS HLT Setpoint Driver"
+                    },
+                    "inputValue": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 60.0
+                    },
+                    "inputSetting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 50.0
+                    },
+                    "outputValue": 28.0,
+                    "outputSetting": -15.0498046875,
+                    "enabled": true,
+                    "active": true,
+                    "kp": {
+                        "__bloxtype": "Quantity",
+                        "unit": "1 / degC",
+                        "value": 1.5
+                    },
+                    "ti": {
+                        "__bloxtype": "Quantity",
+                        "unit": "second",
+                        "value": 300
+                    },
+                    "td": {
+                        "__bloxtype": "Quantity",
+                        "unit": "second",
+                        "value": 600
+                    },
+                    "p": -15.0,
+                    "i": -0.0498046875,
+                    "error": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "readonly": true,
+                        "value": -10.0
+                    },
+                    "drivenOutputId": {
+                        "__bloxtype": "Link",
+                        "type": "ActuatorAnalogInterface",
+                        "driven": true,
+                        "id": "HERMS HLT Setpoint Driver"
+                    },
+                    "derivativeFilter": "FILTER_10m",
+                    "d": 0.0,
+                    "integral": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC * hour",
+                        "readonly": true,
+                        "value": 0.0
+                    },
+                    "derivative": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC / minute",
+                        "readonly": true,
+                        "value": 0.0
+                    },
+                    "integralReset": 0.0,
+                    "boilPointAdjust": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "value": 0.0
+                    },
+                    "boilMinOutput": 0.0,
+                    "boilModeActive": false
+                },
+                "id": "HERMS MT PID",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 120,
+                "groups": [
+                    0
+                ],
+                "type": "Pid",
+                "data": {
+                    "inputId": {
+                        "__bloxtype": "Link",
+                        "type": "SetpointSensorPairInterface",
+                        "id": "HERMS BK Setpoint"
+                    },
+                    "outputId": {
+                        "__bloxtype": "Link",
+                        "type": "ActuatorAnalogInterface",
+                        "id": "HERMS BK PWM"
+                    },
+                    "inputValue": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 100.0
+                    },
+                    "inputSetting": {
+                        "__bloxtype": "Quantity",
+                        "unit": "degC",
+                        "readonly": true,
+                        "value": 100.0
+                    },
+                    "outputValue": 25.10595703125,
+                    "outputSetting": 25.0,
+                    "enabled": true,
+                    "active": true,
+                    "kp": {
+                        "__bloxtype": "Quantity",
+                        "unit": "1 / degC",
+                        "value": 50.0
+                    },
+                    "ti": {
+                        "__bloxtype": "Quantity",
+                        "unit": "second",
+                        "value": 600
+                    },
+                    "td": {
+                        "__bloxtype": "Quantity",
+                        "unit": "second",
+                        "value": 10
+                    },
+                    "drivenOutputId": {
+                        "__bloxtype": "Link",
+                        "type": "ActuatorAnalogInterface",
+                        "driven": true,
+                        "id": "HERMS BK PWM"
+                    },
+                    "boilMinOutput": 25.0,
+                    "boilModeActive": true,
+                    "derivativeFilter": "FILTER_15s",
+                    "p": 0.0,
+                    "i": 0.0,
+                    "d": 0.0,
+                    "error": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "readonly": true,
+                        "value": 0.0
+                    },
+                    "integral": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC * hour",
+                        "readonly": true,
+                        "value": 0.0
+                    },
+                    "derivative": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC / minute",
+                        "readonly": true,
+                        "value": 0.0
+                    },
+                    "integralReset": 0.0,
+                    "boilPointAdjust": {
+                        "__bloxtype": "Quantity",
+                        "unit": "delta_degC",
+                        "value": 0.0
+                    }
+                },
+                "id": "HERMS BK PID",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 121,
+                "groups": [
+                    0
+                ],
+                "type": "MockPins",
+                "data": {
+                    "pins": [
+                        {
+                            "mock1": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock2": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock3": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock4": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock5": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock6": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock7": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock8": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        }
+                    ]
+                },
+                "id": "Mock Pins",
+                "serviceId": "spark-one"
+            },
+            {
+                "nid": 122,
+                "groups": [
+                    0
+                ],
+                "type": "MockPins",
+                "data": {
+                    "pins": [
+                        {
+                            "mock1": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock2": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock3": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock4": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock5": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock6": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock7": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        },
+                        {
+                            "mock8": {
+                                "config": "CHANNEL_UNUSED",
+                                "state": "STATE_INACTIVE"
+                            }
+                        }
+                    ]
+                },
+                "id": "Mock Pins-2",
+                "serviceId": "spark-one"
+            }
+        ]
+    }
+}
