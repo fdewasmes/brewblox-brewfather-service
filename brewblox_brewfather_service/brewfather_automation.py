@@ -65,8 +65,10 @@ class BrewfatherFeature(features.ServiceFeature):
         await self.datastore_client.store_configuration(configuration)
 
     async def start_automated_mash(self):
+        self.proceed_to_next_step(self)
+
+    async def proceed_to_next_step(self):
         configuration = await self.datastore_client.load_configuration()
-        LOGGER.info(f'loaded configuration: {configuration}')
 
         LOGGER.info(f'current state: {configuration.current_state}')
         current_step = configuration.current_state.step
@@ -112,8 +114,11 @@ class BrewfatherFeature(features.ServiceFeature):
             temp_device_block = next((block for block in blocks if block['id'] == self.setpoint_device.id))
             updated_temp = temp_device_block['data']['value']['value']
             LOGGER.info(f'--> updated_temp: {updated_temp}, expected: {expected_temp}')
+            if updated_temp >= expected_temp:
+                await self.proceed_to_next_step()
         except IndexError:
             LOGGER.warn('attempting to reach mash step while it does not exist')
+
 
 @docs(
     tags=['Brewfather'],
