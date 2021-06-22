@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 
 from brewblox_service import brewblox_logger, http, mqtt, scheduler, service
 
-from brewblox_brewfather_service import brewfather_api_client
+from brewblox_brewfather_service import brewfather_automation
 
 LOGGER = brewblox_logger(__name__)
 
@@ -27,7 +27,7 @@ def main():
     mqtt.setup(app)
     http.setup(app)
 
-    brewfather_api_client.setup(app)
+    brewfather_automation.setup(app)
     service.furnish(app)
 
     # service.run() will start serving clients async

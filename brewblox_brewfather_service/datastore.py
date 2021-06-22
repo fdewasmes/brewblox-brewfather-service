@@ -71,27 +71,27 @@ class ConfigurationDatastore:
 
 
 class DatastoreClient:
-    # TODO properly handle host and service
-    SPARK_HOST = '192.168.178.192'
-    DATASTORE_SERVICE = '/history/datastore'
-    SET_API_PATH = '/set'
-    GET_API_PATH = '/get'
-    DATASTORE_API_BASE_URL = f'http://{SPARK_HOST}{DATASTORE_SERVICE}'
+    HISTORY_SERVICE = 'history'
+    DATASTORE_API_PATH = 'datastore'
+    DATASTORE_API_PATH_SET = 'set'
+    DATASTORE_API_PATH_GET = 'get'
+    DATASTORE_API_BASE_URL = f'http://{HISTORY_SERVICE}:5000/{HISTORY_SERVICE}/{DATASTORE_API_PATH}'
 
     def __init__(self, app):
         self.app = app
+        self._namespace = "brewfather"
 
     async def store_configuration(self, configuration: ConfigurationDatastore):
-        """ store mash steps in datastore for later use """
+        """ store mash steps and automation state in datastore for later use """
         LOGGER.info(f'storing configuration: {configuration}')
         session = http.session(self.app)
-        url = f'{self.DATASTORE_API_BASE_URL}{self.SET_API_PATH}'
+        url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_SET}'
         schema = schemas.ConfigurationDatastoreSchema()
         configuration_dump = schema.dump(configuration)
         LOGGER.info(configuration_dump)
 
         # TODO generate an id?
-        payload = {'value': {'namespace': 'brewfather', 'id': '1', 'configuration': configuration_dump}}
+        payload = {'value': {'namespace': self._namespace, 'id': '1', 'configuration': configuration_dump}}
         response = await session.post(url, json=payload)
 
         await response.json()
@@ -99,15 +99,16 @@ class DatastoreClient:
     async def load_configuration(self) -> ConfigurationDatastore:
         """ load current configuration from store """
         session = http.session(self.app)
-        url = f'{self.DATASTORE_API_BASE_URL}{self.GET_API_PATH}'
+        url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_GET}'
 
-        payload = {'namespace': 'brewfather', 'id': '1'}
+        payload = {'namespace': self._namespace, 'id': '1'}
         response = await session.post(url, json=payload)
         raw_configuration_data = await response.json()
+
+        # check configuration
         configuration_data = raw_configuration_data['value']['configuration']
         schema = schemas.ConfigurationDatastoreSchema()
         schema.validate(configuration_data)
 
         configuration = schema.load(configuration_data)
-        LOGGER.info(configuration)
         return configuration
