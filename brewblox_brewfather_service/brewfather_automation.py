@@ -2,14 +2,14 @@
 A Brewfather API client
 """
 
-
+import asyncio
 from aiohttp import web
 from aiohttp_apispec import docs
 from brewblox_service import brewblox_logger, features, mqtt
 from brewblox_brewfather_service.datastore import ConfigurationDatastore, Device, MashAutomation, CurrentState, Settings, DatastoreClient
 from brewblox_brewfather_service import schemas
 from brewblox_brewfather_service.api.brewfather_api_client import BrewfatherClient
-from brewblox_brewfather_service.api.spark_api_client import SparkServiceClient
+from brewblox_spark_api.blocks_api import BlocksApi
 
 LOGGER = brewblox_logger(__name__)
 
@@ -25,7 +25,7 @@ class BrewfatherFeature(features.ServiceFeature):
         LOGGER.info(self.app['config'])
 
         self.bfclient = BrewfatherClient(self.app)
-        self.spark_client = SparkServiceClient(self.app)
+        self.spark_client = features.get(app, BlocksApi)
         self.datastore_client = DatastoreClient(self.app)
 
         # TODO get these from service configuration
@@ -83,11 +83,15 @@ class BrewfatherFeature(features.ServiceFeature):
             LOGGER.warn('current recipe has no mash steps')
 
     async def adjust_mash_setpoint(self, target_temp):
-        obj = {'serviceId': self.setpoint_device.service_id, 'id': self.setpoint_device.id}
-        block = await self.spark_client.read_block(obj)
-        block['data']['storedSetting'] = target_temp
-        data = await self.spark_client.patch_block(block)
-        LOGGER.info(data)
+        try:
+            block = await asyncio.wait_for(self.spark_client.read(self.setpoint_device.id), timeout=5.0)
+            previous_temp = block['data']['storedSetting']['value']
+            block['data']['storedSetting']['value'] = target_temp
+            returned_block = await asyncio.wait_for(self.spark_client.patch(self.setpoint_device.id, block['data']), timeout=5.0)
+            new_temp = returned_block['data']['storedSetting']['value']
+            LOGGER.info(f'mash setpoint changed from {previous_temp} to {new_temp}')
+        except asyncio.TimeoutError as error:
+            raise asyncio.TimeoutError('Failed to communicate with spark in a timely manner') from error
 
     async def get_mash_data(self, recipe_id: str) -> dict:
         recipe = await self.get_recipe(recipe_id)
@@ -157,11 +161,9 @@ async def load_recipe(request: web.Request) -> web.json_response:
 
 def setup(app: web.Application):
     app.router.add_routes(routes)
-    # We register our feature here
-    # It will now be automatically started when the service starts
+    features.add(app, BlocksApi(app, 'spark-one'))
     features.add(app, BrewfatherFeature(app))
 
 
 def fget(app: web.Application) -> BrewfatherFeature:
-    # Retrieve the registered instance of PublishingFeature
     return features.get(app, BrewfatherFeature)
