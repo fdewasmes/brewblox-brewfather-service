@@ -31,6 +31,7 @@ class BrewfatherFeature(features.ServiceFeature):
 
         # TODO get these from service configuration
         self.setpoint_device = Device('spark-one', 'HERMS MT Setpoint')
+        self.spark_client.on_blocks_change(self.spark_blocks_changed)
 
         await mqtt.listen(app, 'brewcast/state/#', self.on_message)
         await mqtt.subscribe(app, 'brewcast/state/#')
@@ -100,22 +101,19 @@ class BrewfatherFeature(features.ServiceFeature):
         return mash_data
 
     async def on_message(self, topic: str, message: dict):
-        if message['type'] != 'Spark.state':
-            return
+        """ nothing to do yet"""
+
+    async def spark_blocks_changed(self, blocks):
         configuration = await self.datastore_client.load_configuration()
         step = configuration.current_state.step
-
         try:
             mash_step = configuration.mash.steps[step]
             expected_temp = mash_step.stepTemp
-            blocks = message['data']['blocks']
             temp_device_block = next((block for block in blocks if block['id'] == self.setpoint_device.id))
             updated_temp = temp_device_block['data']['value']['value']
-
             LOGGER.info(f'--> updated_temp: {updated_temp}, expected: {expected_temp}')
         except IndexError:
             LOGGER.warn('attempting to reach mash step while it does not exist')
-
 
 @docs(
     tags=['Brewfather'],
