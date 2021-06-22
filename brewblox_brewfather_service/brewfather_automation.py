@@ -6,7 +6,8 @@ import asyncio
 from aiohttp import web
 from aiohttp_apispec import docs
 from brewblox_service import brewblox_logger, features, mqtt
-from brewblox_brewfather_service.datastore import ConfigurationDatastore, Device, MashAutomation, CurrentState, Settings, DatastoreClient
+from brewblox_brewfather_service.datastore import (ConfigurationDatastore,
+                                                   Device, MashAutomation, CurrentState, Settings, DatastoreClient)
 from brewblox_brewfather_service import schemas
 from brewblox_brewfather_service.api.brewfather_api_client import BrewfatherClient
 from brewblox_spark_api.blocks_api import BlocksApi
@@ -30,10 +31,9 @@ class BrewfatherFeature(features.ServiceFeature):
 
         # TODO get these from service configuration
         self.setpoint_device = Device('spark-one', 'HERMS MT Setpoint')
-        self.temp_device = Device('spark-one', 'HERMS MT Sensor')
 
-        await mqtt.listen(app, 'brewcast/history/#', self.on_message)
-        await mqtt.subscribe(app, 'brewcast/history/#')
+        await mqtt.listen(app, 'brewcast/state/#', self.on_message)
+        await mqtt.subscribe(app, 'brewcast/state/#')
 
     async def shutdown(self, app: web.Application):
         """ do nothing yet"""
@@ -57,7 +57,7 @@ class BrewfatherFeature(features.ServiceFeature):
             raise ValueError
 
         configuration = ConfigurationDatastore(
-            Settings(MashAutomation(self.setpoint_device, self.temp_device)),
+            Settings(MashAutomation(self.setpoint_device)),
             CurrentState('mash', -1),
             mash)
 
@@ -87,7 +87,8 @@ class BrewfatherFeature(features.ServiceFeature):
             block = await asyncio.wait_for(self.spark_client.read(self.setpoint_device.id), timeout=5.0)
             previous_temp = block['data']['storedSetting']['value']
             block['data']['storedSetting']['value'] = target_temp
-            returned_block = await asyncio.wait_for(self.spark_client.patch(self.setpoint_device.id, block['data']), timeout=5.0)
+            returned_block = await asyncio.wait_for(self.spark_client.patch(self.setpoint_device.id, block['data']),
+                                                    timeout=5.0)
             new_temp = returned_block['data']['storedSetting']['value']
             LOGGER.info(f'mash setpoint changed from {previous_temp} to {new_temp}')
         except asyncio.TimeoutError as error:
@@ -99,15 +100,21 @@ class BrewfatherFeature(features.ServiceFeature):
         return mash_data
 
     async def on_message(self, topic: str, message: dict):
+        if message['type'] != 'Spark.state':
+            return
         configuration = await self.datastore_client.load_configuration()
         step = configuration.current_state.step
+
         try:
             mash_step = configuration.mash.steps[step]
             expected_temp = mash_step.stepTemp
-            updated_temp = message['data'][self.temp_device.id]
+            blocks = message['data']['blocks']
+            temp_device_block = next((block for block in blocks if block['id'] == self.setpoint_device.id))
+            updated_temp = temp_device_block['data']['value']['value']
+
             LOGGER.info(f'--> updated_temp: {updated_temp}, expected: {expected_temp}')
         except IndexError:
-            LOGGER.warn('attempting to reach mash step whil it does not exist')
+            LOGGER.warn('attempting to reach mash step while it does not exist')
 
 
 @docs(

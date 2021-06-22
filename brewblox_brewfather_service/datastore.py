@@ -50,9 +50,8 @@ class CurrentState:
 
 
 class MashAutomation:
-    def __init__(self, setpointDevice: Device, temp_sensor: Device):
+    def __init__(self, setpointDevice: Device):
         self.setpointDevice = setpointDevice
-        self.temp_sensor = temp_sensor
 
 
 class Settings:

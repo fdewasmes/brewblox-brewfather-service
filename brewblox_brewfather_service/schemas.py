@@ -26,7 +26,6 @@ class DeviceSchema(Schema):
 
 class MashSettingsSchema(Schema):
     setpointDevice = fields.Nested(DeviceSchema, Required=True)
-    temp_sensor = fields.Nested(DeviceSchema, Required=True)
 
     @post_load
     def make_mashautomation_settings(self, data, **kwargs):

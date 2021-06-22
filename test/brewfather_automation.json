@@ -4,10 +4,6 @@
             "setpointDevice": {
                 "serviceId": "spark-one",
                 "id": "HERMS MT Setpoint"
-            },
-            "tempSensor": {
-                "serviceId": "spark-one",
-                "id": "HERMS MT Sensor"
             }
         },
         "spargeAutomation": {
