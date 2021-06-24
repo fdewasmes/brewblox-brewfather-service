@@ -1,6 +1,3 @@
-"""
-Example of how to import and use the brewblox service
-"""
 from os import getenv
 from argparse import ArgumentParser
 
@@ -20,7 +17,7 @@ def create_parser(default_name='brewfather') -> ArgumentParser:
                        type=str,
                        default='spark-one')
     group.add_argument('--mash-setpoint-device',
-                       help='Setpoint device id (name) allowing to drive and control the mash temperature. [%(default)s]',
+                       help='Setpoint device id (name) allowing to drive & control the mash temperature. [%(default)s]',
                        type=str,
                        default='HERMS MT Setpoint')
 
@@ -28,7 +25,6 @@ def create_parser(default_name='brewfather') -> ArgumentParser:
 
 
 def main():
-
     app = service.create_app(parser=create_parser())
     app['BREWFATHER_USER_ID'] = getenv('BREWFATHER_USER_ID')
     app['BREWFATHER_TOKEN'] = getenv('BREWFATHER_TOKEN')
@@ -39,8 +35,6 @@ def main():
 
     brewfather_automation.setup(app)
     service.furnish(app)
-
-    # service.run() will start serving clients async
     service.run(app)
 
 

@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 from aiohttp import web
 from aiohttp_apispec import docs
-from brewblox_service import brewblox_logger, features, mqtt, service
+from brewblox_service import brewblox_logger, features, mqtt
 
 from brewblox_brewfather_service.schemas import (AutomationState, AutomationType, CurrentStateSchema,
                                                  Device, MashAutomation, CurrentState, Settings)
@@ -127,8 +127,9 @@ class BrewfatherFeature(features.ServiceFeature):
                                            timeout=5.0)
             previous_temp = block['data']['storedSetting']['value']
             block['data']['storedSetting']['value'] = target_temp
-            returned_block = await asyncio.wait_for(self.spark_client.patch(self.settings.mashAutomation.setpointDevice.id, block['data']),
-                                                    timeout=5.0)
+            returned_block = await asyncio.wait_for(
+                self.spark_client.patch(self.settings.mashAutomation.setpointDevice.id, block['data']),
+                timeout=5.0)
             new_temp = returned_block['data']['storedSetting']['value']
             LOGGER.info(f'mash setpoint changed from {previous_temp} to {new_temp}')
         except asyncio.TimeoutError as error:
@@ -147,7 +148,9 @@ class BrewfatherFeature(features.ServiceFeature):
         state.automation_state = AutomationState.REST
         state.step_start_time = datetime.utcnow()
         state.step_end_time = state.step_start_time + timedelta(minutes=state.step.stepTime)
-        LOGGER.info(f'Starting timer duration {state.step.stepTime} for step {state.step.name}, expected end time: {state.step_end_time}')
+        log_msg = f'Starting timer duration {state.step.stepTime} for step {state.step.name}, '
+        log_msg += f'expected end time: {state.step_end_time}'
+        LOGGER.info(log_msg)
         loop = asyncio.get_event_loop()
         loop.call_later(state.step.stepTime*60, asyncio.create_task, self.end_timer())
         await self.datastore_client.store_state(state)
@@ -174,7 +177,8 @@ class BrewfatherFeature(features.ServiceFeature):
         if state.automation_state == AutomationState.HEAT:
             try:
                 expected_temp = step.stepTemp
-                temp_device_block = next((block for block in blocks if block['id'] == self.settings.mashAutomation.setpointDevice.id))
+                setpoint_dev_id = self.settings.mashAutomation.setpointDevice.id
+                temp_device_block = next((block for block in blocks if block['id'] == setpoint_dev_id))
                 updated_temp = temp_device_block['data']['value']['value']
                 LOGGER.info(f'--> updated_temp: {updated_temp}, expected: {expected_temp}')
                 if updated_temp >= expected_temp:
