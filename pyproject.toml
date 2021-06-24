@@ -10,6 +10,7 @@ readme = "README.md"
 python = ">=3.7,<4"
 brewblox-service = "^0.32.2"
 brewblox-spark-api = "^0.1.0"
+marshmallow-enum = "^1.5.1"
 
 [tool.poetry.dev-dependencies]
 pytest-flake8 = "^1.0.7"
