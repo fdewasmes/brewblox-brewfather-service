@@ -18,7 +18,17 @@
     },
     "current_state": {
         "automation": "mash",
-        "step":1
+        "step_index":1,
+        "step":{
+            "stepTemp": 50,
+            "rampTime": null,
+            "stepTime": 45,
+            "type": "Temperature",
+            "name": "Protein",
+            "displayStepTemp": 50
+        },
+        "step_start_time": "",
+        "step_end_time": ""
     },
     "mash": {
         "name": "Protein rest plus beta- and alpha- amylase rests",

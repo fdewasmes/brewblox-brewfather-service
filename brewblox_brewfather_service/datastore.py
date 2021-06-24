@@ -2,71 +2,13 @@
 Dataclasses and Datastore API client to store and load configuration
 """
 
+
 from brewblox_service import http
 from brewblox_service import brewblox_logger
 from brewblox_brewfather_service import schemas
 
 
 LOGGER = brewblox_logger(__name__)
-
-
-class Device:
-    def __init__(self, service_id: str, id: str):
-        self.service_id = service_id
-        self.id = id
-
-
-class MashStep:
-    def __init__(self, stepTemp, rampTime, stepTime, type, name, displayStepTemp):
-        self.stepTemp = stepTemp
-        self.rampTime = rampTime
-        self.stepTime = stepTime
-        self.type = type
-        self.name = name
-        self.displayStepTemp = displayStepTemp
-
-    def __repr__(self):
-        return '<MashStep(name={self.name!r})>'.format(self=self)
-
-
-class Mash:
-    def __init__(self, name, steps, _id):
-        self.name = name
-        self.steps = steps
-        self._id = _id
-
-    def __repr__(self):
-        return f'<Mash(name={self.name!r}, steps={self.steps!r})>'
-
-
-class CurrentState:
-    # TODO define enum
-    def __init__(self, automation: str, step: int):
-        self.automation = automation
-        self.step = step
-
-    def __repr__(self):
-        return f'<CurrentState(automation={self.automation!r}, step={self.step!r})>'
-
-
-class MashAutomation:
-    def __init__(self, setpointDevice: Device):
-        self.setpointDevice = setpointDevice
-
-
-class Settings:
-    def __init__(self, mashAutomation: MashAutomation):
-        self.mashAutomation = mashAutomation
-
-
-class ConfigurationDatastore:
-    def __init__(self, settings: Settings, current_state: CurrentState, mash: Mash):
-        self.settings = settings
-        self.current_state = current_state
-        self.mash = mash
-
-    def __repr__(self):
-        return f'<Configuration(settings={self.settings!r}, current_state={self.current_state!r}, mash={self.mash!r})>'
 
 
 class DatastoreClient:
@@ -78,36 +20,96 @@ class DatastoreClient:
 
     def __init__(self, app):
         self.app = app
-        self._namespace = "brewfather"
+        self._namespace = 'brewfather'
+        self._mash_steps_id = 'mash'
+        self._settings_id = 'settings'
+        self._mash_log_id = 'mashlog'
+        self._state_id = 'state'
 
-    async def store_configuration(self, configuration: ConfigurationDatastore):
-        """ store mash steps and automation state in datastore for later use """
-        LOGGER.info(f'storing configuration: {configuration}')
+        self._state = None
+        self._settings = None
+        self._mash_steps = None
+
+    async def store_mash_steps(self, mash_steps: list):
+        """ store recipe mash steps in datastore for later use """
+        LOGGER.info(f'storing mash steps: {mash_steps}')
+
         session = http.session(self.app)
         url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_SET}'
-        schema = schemas.ConfigurationDatastoreSchema()
-        configuration_dump = schema.dump(configuration)
-        LOGGER.info(configuration_dump)
 
-        # TODO generate an id?
-        payload = {'value': {'namespace': self._namespace, 'id': '1', 'configuration': configuration_dump}}
+        schema = schemas.MashSchema()
+        schema.validate(mash_steps)
+        self.mash_steps = schema.load(mash_steps)
+
+        payload = {'value': {'namespace': self._namespace, 'id': self._mash_steps_id, 'data': mash_steps}}
         response = await session.post(url, json=payload)
 
         await response.json()
+        self._mash_steps = mash_steps
 
-    async def load_configuration(self) -> ConfigurationDatastore:
-        """ load current configuration from store """
+    async def store_settings(self, settings: schemas.Settings):
+        """ store automation settings in datastore for later use """
+        LOGGER.info(f'storing settings: {settings}')
+
+        session = http.session(self.app)
+        url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_SET}'
+
+        schema = schemas.SettingsSchema()
+        settings_dump = schema.dump(settings)
+
+        payload = {'value': {'namespace': self._namespace, 'id': self._settings_id, 'data': settings_dump}}
+        response = await session.post(url, json=payload)
+
+        await response.json()
+        self._settings = settings
+
+    async def store_state(self, state: schemas.CurrentState):
+        """ store automation state in datastore for later use """
+        LOGGER.info(f'storing state: {state}')
+        session = http.session(self.app)
+        url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_SET}'
+        schema = schemas.CurrentStateSchema()
+        state_dump = schema.dump(state)
+
+        payload = {'value': {'namespace': self._namespace, 'id': self._state_id, 'data': state_dump}}
+        LOGGER.info(payload)
+        response = await session.post(url, json=payload)
+
+        await response.json()
+        self._state = state
+
+    async def load_state(self) -> schemas.CurrentState:
+        """ load current state from store """
         session = http.session(self.app)
         url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_GET}'
 
-        payload = {'namespace': self._namespace, 'id': '1'}
+        payload = {'namespace': self._namespace, 'id': self._state_id}
         response = await session.post(url, json=payload)
-        raw_configuration_data = await response.json()
+        raw_state_data = await response.json()
 
         # check configuration
-        configuration_data = raw_configuration_data['value']['configuration']
-        schema = schemas.ConfigurationDatastoreSchema()
-        schema.validate(configuration_data)
+        state_data = raw_state_data['value']['data']
+        schema = schemas.CurrentStateSchema()
+        schema.validate(state_data)
 
-        configuration = schema.load(configuration_data)
-        return configuration
+        state = schema.load(state_data)
+        self._state = state
+        return state
+
+    async def load_mash(self) -> schemas.Mash:
+        """ load mash from store """
+        session = http.session(self.app)
+        url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_GET}'
+
+        payload = {'namespace': self._namespace, 'id': self._mash_steps_id}
+        response = await session.post(url, json=payload)
+        raw_mash_data = await response.json()
+
+        # check configuration
+        mash_data = raw_mash_data['value']['data']
+        schema = schemas.MashSchema()
+        schema.validate(mash_data)
+
+        mash = schema.load(mash_data)
+        self._mash = mash
+        return mash
