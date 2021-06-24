@@ -14,6 +14,16 @@ LOGGER = brewblox_logger(__name__)
 def create_parser(default_name='brewfather') -> ArgumentParser:
     parser: ArgumentParser = service.create_parser(default_name=default_name)
 
+    group = parser.add_argument_group('Brewfather automation config')
+    group.add_argument('--mash-service-id',
+                       help='Service id driven by brewfather mash automation service. [%(default)s]',
+                       type=str,
+                       default='spark-one')
+    group.add_argument('--mash-setpoint-device',
+                       help='Setpoint device id (name) allowing to drive and control the mash temperature. [%(default)s]',
+                       type=str,
+                       default='HERMS MT Setpoint')
+
     return parser
 
 

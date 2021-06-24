@@ -7,9 +7,9 @@ from datetime import datetime, timedelta
 
 from aiohttp import web
 from aiohttp_apispec import docs
-from brewblox_service import brewblox_logger, features, mqtt
+from brewblox_service import brewblox_logger, features, mqtt, service
 
-from brewblox_brewfather_service.schemas import (AutomationState, AutomationType,
+from brewblox_brewfather_service.schemas import (AutomationState, AutomationType, CurrentStateSchema,
                                                  Device, MashAutomation, CurrentState, Settings)
 from brewblox_brewfather_service.datastore import DatastoreClient
 from brewblox_brewfather_service import schemas
@@ -33,8 +33,14 @@ class BrewfatherFeature(features.ServiceFeature):
         self.spark_client = features.get(app, BlocksApi)
         self.datastore_client = DatastoreClient(self.app)
 
-        # TODO get these from service configuration
-        setpoint_device = Device('spark-one', 'HERMS MT Setpoint')
+        config = app['config']
+        service_id = config['mash_service_id']
+        setpoint_device_id = config['mash_setpoint_device']
+
+        self.name = self.app['config']['name']
+        self.topic = f'brewcast/state/{self.name}'
+
+        setpoint_device = Device(service_id, setpoint_device_id)
         self.settings = Settings(MashAutomation(setpoint_device))
         await self.datastore_client.store_settings(self.settings)
 
@@ -69,6 +75,17 @@ class BrewfatherFeature(features.ServiceFeature):
     async def start_automated_mash(self):
         state = CurrentState(AutomationType.MASH, -1, None)
         await self.datastore_client.store_state(state)
+        schema = CurrentStateSchema()
+        state_str = schema.dump(state)
+        await mqtt.publish(self.app,
+                           self.topic,
+                           {
+                               'key': self.name,
+                               'data': {
+                                   'status_msg': '== MASH START ==',
+                                   'state': state_str
+                               }
+                           })
         await self.proceed_to_next_step()
 
     async def proceed_to_next_step(self):
@@ -88,6 +105,19 @@ class BrewfatherFeature(features.ServiceFeature):
             await self.adjust_mash_setpoint(target_temp)
             LOGGER.info(f'current state: {state}')
             await self.datastore_client.store_state(state)
+
+            # let others know we procedeed to next step
+            schema = CurrentStateSchema()
+            state_str = schema.dump(state)
+            await mqtt.publish(self.app,
+                               self.topic,
+                               {
+                                    'key': self.name,
+                                    'data': {
+                                        'status_msg': 'Proceeded to next step',
+                                        'state': state_str
+                                    }
+                               })
         except IndexError:
             LOGGER.warn('current recipe has no more mash steps')
 
@@ -121,6 +151,18 @@ class BrewfatherFeature(features.ServiceFeature):
         loop = asyncio.get_event_loop()
         loop.call_later(state.step.stepTime*60, asyncio.create_task, self.end_timer())
         await self.datastore_client.store_state(state)
+
+        schema = CurrentStateSchema()
+        state_str = schema.dump(state)
+        await mqtt.publish(self.app,
+                           self.topic,
+                           {
+                                'key': self.name,
+                                'data': {
+                                    'status_msg': f'rest {state.step.stepTime} for {state.step.name}',
+                                    'state': state_str
+                                }
+                           })
 
     async def end_timer(self):
         LOGGER.info('Timer is over, proceeding to next step')
