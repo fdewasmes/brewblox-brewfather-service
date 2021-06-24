@@ -4,7 +4,7 @@ Schemas used
 
 import json
 from enum import Enum
-from datetime import datetime, timedelta
+from datetime import datetime
 from marshmallow_enum import EnumField
 from marshmallow import Schema, ValidationError, fields, post_load, EXCLUDE
 from marshmallow.validate import OneOf
@@ -53,7 +53,11 @@ class Mash:
 
 class CurrentState:
     def __init__(self, automation_type: AutomationType,
-                 step_index: int, step: MashStep, step_start_time=datetime.utcnow(), step_end_time=datetime.utcnow(), automation_state: AutomationState = AutomationState.REST):
+                 step_index: int,
+                 step: MashStep,
+                 step_start_time=datetime.utcnow(),
+                 step_end_time=datetime.utcnow(),
+                 automation_state: AutomationState = AutomationState.REST):
         self.automation_type = automation_type
         self.automation_state = automation_state
         self.step_index = step_index
@@ -62,7 +66,10 @@ class CurrentState:
         self.step_end_time = step_end_time
 
     def __repr__(self):
-        return f'<CurrentState(automation_type={self.automation_type!r}, automation_state={self.automation_state!r}, step_index= {self.step_index!r}, step={self.step!r}, step_start_time={self.step_start_time!r}, step_end_time={self.step_end_time!r})>'
+        obj_rep = f'<CurrentState(type={self.automation_type!r}, state={self.automation_state!r}, '
+        obj_rep += f'index={self.step_index!r}, step={self.step!r}, start={self.step_start_time!r}, '
+        obj_rep += f'end={self.step_end_time!r})>'
+        return obj_rep
 
 
 class MashAutomation:
