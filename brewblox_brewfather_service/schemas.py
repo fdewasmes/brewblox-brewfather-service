@@ -38,7 +38,7 @@ class MashStep:
         self.displayStepTemp = displayStepTemp
 
     def __repr__(self):
-        return '<MashStep(name={self.name!r})>'.format(self=self)
+        return '<MashStep(name={self.name!r}, temp={self.stepTemp!r}, time={self.stepTime!r})>'.format(self=self)
 
 
 class Mash:
