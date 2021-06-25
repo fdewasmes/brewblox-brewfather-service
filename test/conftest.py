@@ -12,8 +12,8 @@ from brewblox_service import service
 from brewblox_brewfather_service.__main__ import create_parser
 
 TEMP_ENV_VARS = {
-    'BREWFATHER_USER_ID': '0I98vlCQtJUedKRyWlMcY181eIm2',
-    'BREWFATHER_TOKEN': 'bPBEUC4qZnksTKc6MNpYFHL5wMXxGqDmD0JKOC8GyXaXhJWvxuTgqSM2RrBsQ1sY',
+    'BREWFATHER_USER_ID': 'USER_ID',
+    'BREWFATHER_TOKEN': 'API_KEY',
 }
 
 
@@ -40,7 +40,8 @@ def environment():
 @pytest.fixture
 def app_config() -> dict:
     return {
-
+        'mash_service_id': 'spark-one',
+        'mash_setpoint_device': 'HERMS MLT Setpoint'
     }
 
 
@@ -48,6 +49,8 @@ def app_config() -> dict:
 def sys_args(app_config) -> list:
     return [str(v) for v in [
         'app_name',
+        '--mash-service-id', app_config['mash_service_id'],
+        '--mash-setpoint-device', app_config['mash_setpoint_device']
     ]]
 
 
