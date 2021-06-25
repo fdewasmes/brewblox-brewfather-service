@@ -2,7 +2,6 @@
 Schemas used and data classes
 """
 
-import json
 from enum import Enum
 from datetime import datetime
 from marshmallow_enum import EnumField
@@ -151,13 +150,3 @@ class CurrentStateSchema(Schema):
     @post_load
     def make_current_state(self, data, **kwargs):
         return CurrentState(**data)
-
-
-if __name__ == '__main__':
-    with open('./mash.json', 'r') as file:
-        mashstr = file.read()
-
-    jsonstr = json.loads(mashstr)
-    schema = MashSchema()
-    result = schema.load(jsonstr['mash'])
-    print(result)

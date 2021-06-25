@@ -1,0 +1,1000 @@
+{
+    "searchTags": [],
+    "_created": {
+        "_seconds": 1609253001,
+        "_nanoseconds": 977000000
+    },
+    "yeastToleranceExceededBy": null,
+    "mashEfficiency": 73.5,
+    "type": "All Grain",
+    "fermentables": [
+        {
+            "ibuPerAmount": null,
+            "inventory": 15.75,
+            "_created": {
+                "_seconds": 1596360764,
+                "_nanoseconds": 190000000
+            },
+            "_id": "default-e6ba5b8",
+            "_timestamp_ms": 1596360764190,
+            "lovibond": 2.8,
+            "usedIn": "",
+            "origin": "UK",
+            "_rev": "loKFBWD5CuBNJcJX7R3ktLA0Kf1NCm",
+            "_timestamp": {
+                "_seconds": 1596360764,
+                "_nanoseconds": 190000000
+            },
+            "percentage": 100,
+            "color": 3.045685,
+            "name": "Maris Otter",
+            "moisture": null,
+            "substitutes": "",
+            "protein": null,
+            "userNotes": "",
+            "costPerAmount": null,
+            "notFermentable": false,
+            "notes": "",
+            "potential": 1.038,
+            "amount": 5.41,
+            "attenuation": 0.81,
+            "potentialPercentage": 82.5,
+            "type": "Grain",
+            "diastaticPower": null,
+            "supplier": "Crisp",
+            "grainCategory": "Base (Maris Otter)",
+            "_version": "2.3.5"
+        }
+    ],
+    "buGuRatio": 0.96,
+    "_public": false,
+    "_uid": "0I98vlCQtJUedKRyWlMcY181eIm2",
+    "manualFg": false,
+    "styleColor": true,
+    "abv": 5.78,
+    "og": 1.063226151,
+    "water": {
+        "mashAdjustments": {
+            "sulfate": 147.248,
+            "magnesiumChloride": 0,
+            "calciumHydroxide": null,
+            "bicarbonate": 0,
+            "chloride": 71.875,
+            "sodium": 25.967,
+            "sodiumMetabisulfite": 0,
+            "sodiumChloride": 1,
+            "magnesium": 0,
+            "calcium": 79.459,
+            "magnesiumSulfate": null,
+            "calciumChloride": 1,
+            "calciumCarbonate": 0,
+            "sodiumBicarbonate": null,
+            "calciumSulfate": 4,
+            "sodiumMetabisulfitePPM": 0,
+            "volume": 15.15,
+            "acids": [
+                {
+                    "concentration": 80,
+                    "type": "lactic",
+                    "alkalinityMeqL": -2.719357650050719,
+                    "amount": 3
+                }
+            ]
+        },
+        "settings": {
+            "sodiumChloride": {
+                "auto": true,
+                "mash": true,
+                "sparge": true
+            },
+            "calciumChloride": {
+                "form": "dihydrate",
+                "auto": true,
+                "sparge": true,
+                "mash": true
+            },
+            "calciumHydroxide": {
+                "auto": false,
+                "sparge": false,
+                "mash": true
+            },
+            "adjustSparge": true,
+            "sodiumBicarbonate": {
+                "mash": true,
+                "sparge": false,
+                "auto": false
+            },
+            "calciumSulfate": {
+                "auto": true,
+                "mash": true,
+                "sparge": true
+            },
+            "magnesiumSulfate": {
+                "mash": true,
+                "sparge": true,
+                "auto": true
+            }
+        },
+        "target": {
+            "residualAlkalinity": -14.6915,
+            "magnesium": 15,
+            "chloride": 50,
+            "name": "Style - American IPA",
+            "bicarbonate": 80,
+            "sulfate": 250,
+            "ionBalanceOff": true,
+            "anions": 7.926,
+            "alkalinity": 65.557,
+            "ionBalance": 1,
+            "sodium": 50,
+            "soClRatio": 5,
+            "cations": 8.4,
+            "residualAlkalinityMeqLCalc": -0.69152,
+            "type": "target",
+            "hardness": 311,
+            "_id": "5gkFkUtI8AcqHI9lvIdzB78XCW8i7F",
+            "calcium": 100,
+            "bicarbonateMeqL": 1.311131506490101
+        },
+        "mashWaterAmount": null,
+        "total": {
+            "soClRatio": 1.79,
+            "type": "source",
+            "alkalinity": 188.4763,
+            "chloride": 49.345,
+            "residualAlkalinity": 99.78633,
+            "magnesium": 34,
+            "_created": {
+                "_seconds": 1603636586,
+                "_nanoseconds": 84000000
+            },
+            "residualAlkalinityMeqLCalc": 1.55574,
+            "ionBalanceOff": true,
+            "_timestamp": {
+                "_seconds": 1609236593,
+                "_nanoseconds": 943000000
+            },
+            "bicarbonate": 230,
+            "_timestamp_ms": 1609236593943,
+            "hardness": 380,
+            "_rev": "KpMvhebDH4sy8jJR3NAmpQIgE8bpq2",
+            "name": "Redange",
+            "sulfate": 88.459,
+            "ph": 7.6,
+            "hidden": false,
+            "anions": 7.003,
+            "ionBalance": 5,
+            "sodium": 18.331,
+            "calcium": 96.18,
+            "_version": "2.5.2",
+            "_id": "r6oTd0C69eban9AXywKI7GHl6Oi5nT",
+            "bicarbonateMeqL": 3.76950308115904,
+            "cations": 8.395
+        },
+        "totalAdjustments": {
+            "calciumChloride": 1,
+            "calciumSulfate": 4,
+            "volume": 29.96,
+            "magnesiumChloride": 0,
+            "sodiumMetabisulfite": 0,
+            "sodiumChloride": 1,
+            "chloride": 36.345,
+            "bicarbonate": 0,
+            "sodiumBicarbonate": null,
+            "calciumCarbonate": 0,
+            "calciumHydroxide": null,
+            "magnesium": 0,
+            "sulfate": 74.459,
+            "magnesiumSulfate": null,
+            "calcium": 40.18,
+            "acids": [
+                {
+                    "amount": 3,
+                    "type": "lactic",
+                    "alkalinityMeqL": -2.814089371466421,
+                    "concentration": 80
+                }
+            ],
+            "sodium": 13.131,
+            "sodiumMetabisulfitePPM": 0
+        },
+        "source": {
+            "_created": {
+                "_seconds": 1603636586,
+                "_nanoseconds": 84000000
+            },
+            "ionBalance": 7,
+            "hidden": false,
+            "_timestamp_ms": 1609236593943,
+            "type": "source",
+            "hardness": 280,
+            "anions": 4.428,
+            "residualAlkalinity": 128.4869,
+            "alkalinity": 188.4763,
+            "residualAlkalinityMeqLCalc": 2.27185,
+            "magnesium": 34,
+            "sodium": 5.2,
+            "name": "Redange",
+            "_id": "r6oTd0C69eban9AXywKI7GHl6Oi5nT",
+            "_version": "2.5.2",
+            "_rev": "KpMvhebDH4sy8jJR3NAmpQIgE8bpq2",
+            "calcium": 56,
+            "_timestamp": {
+                "_seconds": 1609236593,
+                "_nanoseconds": 943000000
+            },
+            "ionBalanceOff": true,
+            "cations": 5.819,
+            "bicarbonateMeqL": 3.76950308115904,
+            "ph": 7.6,
+            "sulfate": 14,
+            "bicarbonate": 230,
+            "chloride": 13,
+            "soClRatio": 1.08
+        },
+        "sourceTargetDiff": {
+            "residualAlkalinity": 143.1784,
+            "sodium": -44.8,
+            "calcium": -44,
+            "cations": -2.581,
+            "ionBalance": -8,
+            "chloride": -37,
+            "bicarbonate": 150,
+            "hardness": -32,
+            "soClRatio": 6.38,
+            "sulfate": -236,
+            "residualAlkalinityMeqLCalc": 2.96337,
+            "ionBalanceOff": true,
+            "bicarbonateMeqL": 2.458371574668939,
+            "anions": -3.499,
+            "magnesium": 19,
+            "alkalinity": 122.9193
+        },
+        "spargeAcidPhAdjustment": 0,
+        "meta": {
+            "equalSourceTotal": false
+        },
+        "style": "default-49",
+        "mashTargetDiff": {
+            "hardness": 167,
+            "calcium": 35.459,
+            "sodium": -18.833,
+            "sulfate": -88.752,
+            "bicarbonateMeqL": 2.458371574668939,
+            "anions": 1.594,
+            "cations": 2.514,
+            "bicarbonate": 150,
+            "ionBalance": 11,
+            "soClRatio": -2.54,
+            "residualAlkalinityMeqLCalc": 1.54722,
+            "residualAlkalinity": 86.42084,
+            "magnesium": 19,
+            "chloride": 34.875,
+            "alkalinity": 122.9193,
+            "ionBalanceOff": true
+        },
+        "spargeWaterAmount": null,
+        "mashPhDistilled": 5.68,
+        "dilutionPercentage": null,
+        "mash": {
+            "sodium": 31.167,
+            "anions": 9.521,
+            "_timestamp": {
+                "_seconds": 1609236593,
+                "_nanoseconds": 943000000
+            },
+            "_created": {
+                "_seconds": 1603636586,
+                "_nanoseconds": 84000000
+            },
+            "_id": "r6oTd0C69eban9AXywKI7GHl6Oi5nT",
+            "name": "Redange",
+            "_rev": "KpMvhebDH4sy8jJR3NAmpQIgE8bpq2",
+            "bicarbonate": 230,
+            "soClRatio": 1.9,
+            "calcium": 135.459,
+            "ph": 7.6,
+            "bicarbonateMeqL": 3.76950308115904,
+            "residualAlkalinityMeqLCalc": 0.8557,
+            "cations": 10.913,
+            "hidden": false,
+            "hardness": 478,
+            "_version": "2.5.2",
+            "type": "source",
+            "magnesium": 34,
+            "ionBalance": 3,
+            "_timestamp_ms": 1609236593943,
+            "chloride": 84.875,
+            "ionBalanceOff": true,
+            "alkalinity": 188.4763,
+            "sulfate": 161.248,
+            "residualAlkalinity": 71.72934
+        },
+        "totalTargetDiff": {
+            "chloride": -0.655,
+            "sulfate": -161.541,
+            "ionBalanceOff": true,
+            "bicarbonate": 150,
+            "hardness": 69,
+            "anions": -0.923,
+            "cations": -0.005,
+            "calcium": -3.82,
+            "bicarbonateMeqL": 2.458371574668939,
+            "residualAlkalinity": 114.47783,
+            "magnesium": 19,
+            "ionBalance": -49,
+            "soClRatio": 246.63,
+            "residualAlkalinityMeqLCalc": 2.24726,
+            "alkalinity": 122.9193,
+            "sodium": -31.669
+        },
+        "sparge": {
+            "bicarbonate": 230,
+            "sulfate": 14,
+            "magnesium": 34,
+            "alkalinity": 188.4763,
+            "hardness": 280,
+            "anions": 4.428,
+            "ionBalanceOff": true,
+            "_version": "2.5.2",
+            "_created": {
+                "_seconds": 1603636586,
+                "_nanoseconds": 84000000
+            },
+            "cations": 5.819,
+            "soClRatio": 1.08,
+            "calcium": 56,
+            "_timestamp": {
+                "_seconds": 1609236593,
+                "_nanoseconds": 943000000
+            },
+            "hidden": false,
+            "bicarbonateMeqL": 3.76950308115904,
+            "ionBalance": 7,
+            "chloride": 13,
+            "residualAlkalinityMeqLCalc": 2.27185,
+            "_rev": "KpMvhebDH4sy8jJR3NAmpQIgE8bpq2",
+            "sodium": 5.2,
+            "name": "Redange",
+            "residualAlkalinity": 128.4869,
+            "ph": 7.6,
+            "_timestamp_ms": 1609236593943,
+            "_id": "r6oTd0C69eban9AXywKI7GHl6Oi5nT",
+            "type": "source"
+        },
+        "spargeAdjustments": {
+            "sulfate": 0,
+            "chloride": 0,
+            "magnesium": 0,
+            "volume": 14.81,
+            "bicarbonate": 0,
+            "sodium": 0,
+            "calcium": 0,
+            "acids": [
+                {
+                    "concentration": 80,
+                    "amount": 0,
+                    "type": "lactic"
+                }
+            ],
+            "sodiumMetabisulfitePPM": 0
+        },
+        "diluted": null,
+        "spargeTargetDiff": {
+            "sodium": -44.8,
+            "bicarbonateMeqL": 2.458371574668939,
+            "cations": -2.581,
+            "calcium": -44,
+            "ionBalance": -8,
+            "residualAlkalinityMeqLCalc": 2.96337,
+            "anions": -3.499,
+            "sulfate": -236,
+            "alkalinity": 122.9193,
+            "bicarbonate": 150,
+            "residualAlkalinity": 143.1784,
+            "ionBalanceOff": true,
+            "soClRatio": 6.38,
+            "magnesium": 19,
+            "chloride": -37,
+            "hardness": -32
+        },
+        "acidPhAdjustment": -0.20723,
+        "mashPh": 5.54,
+        "enableSpargeAdjustments": false,
+        "enableAcidAdjustments": true
+    },
+    "_timestamp": {
+        "_seconds": 1609254279,
+        "_nanoseconds": 112000000
+    },
+    "nutrition": {
+        "calories": {
+            "kJ": 253.85934311264623,
+            "total": 60.67383917606267,
+            "carbs": 27.110398007880427,
+            "alcohol": 33.563441168182244
+        },
+        "carbs": {
+            "total": 6.786521740070733
+        }
+    },
+    "_init": true,
+    "efficiency": 62.5,
+    "hopsTotalAmount": 140.8,
+    "avgWeightedHopstandTemp": 80,
+    "_type": "recipe",
+    "equipment": {
+        "_rev": "vzf6AnKZmnilfBmnodjGW0Lc5qsyWX",
+        "calcAromaHopUtilization": true,
+        "boilSize": 24.53,
+        "mashEfficiency": 73.5,
+        "brewhouseEfficiency": 62.5,
+        "waterCalculation": "Default_2",
+        "hidden": false,
+        "boilTime": 60,
+        "_timestamp_ms": 1604297847097,
+        "hopUtilization": 1,
+        "waterGrainRatio": 2.8,
+        "efficiency": 62.5,
+        "spargeWaterOverflow": "Mash",
+        "_created": {
+            "_seconds": 1603656144,
+            "_nanoseconds": 758000000
+        },
+        "postBoilKettleVol": 20.833333333333336,
+        "_id": "default",
+        "spargeWaterReminderEnabled": true,
+        "fermenterLoss": 1,
+        "ambientTemperature": 22,
+        "calcBoilVolume": true,
+        "mashWaterVolumeLimitEnabled": true,
+        "efficiencyType": "Fermenter",
+        "grainAbsorptionRate": 1,
+        "evaporationRate": 0.15083571137382798,
+        "fermenterLossEstimate": 0,
+        "spargeWaterFormula": "BoilVolumeColdL - MashWaterL + (GrainAmountKg * GrainAbsorptionRate) + MashTunLossL",
+        "batchSize": 17,
+        "spargeWaterReminderTime": 15,
+        "mashWaterMax": 27,
+        "_timestamp": {
+            "_seconds": 1604297847,
+            "_nanoseconds": 97000000
+        },
+        "aromaHopUtilization": 0.23,
+        "hopstandTemperature": 80,
+        "calcMashEfficiency": false,
+        "_version": "2.4.9",
+        "name": "Fabrice home made",
+        "trubChillerLoss": 3,
+        "fermenterVolume": 17,
+        "calcStrikeWaterTemperature": true,
+        "spargeTemperature": 76,
+        "boilOffPerHr": 3.7,
+        "bottlingVolume": 16,
+        "mashTunDeadSpace": null,
+        "mashTunLoss": 1,
+        "mashWaterFormula": "(GrainAmountKg * WaterGrainRatio) + MashTunDeadSpaceL",
+        "fermenterVolumeBeforeTopUp": 17,
+        "_meta": {
+            "efficiencyIsCalculated": true,
+            "mashEfficiencyIsCalculated": false
+        }
+    },
+    "data": {
+        "topUpWater": 0,
+        "totalWaterAmount": 29.96,
+        "mashFermentablesAmount": 5.41,
+        "mashVolume": 18.7747,
+        "spargeWaterAmount": 14.81,
+        "strikeTemp": 56.6,
+        "mashVolumeSurplus": 0,
+        "hopsAmount": 140.8,
+        "otherFermentables": [],
+        "otherFermentablesAmount": 0,
+        "mashWaterAmount": 15.15,
+        "hltWaterAmount": 14.81,
+        "mashFermentables": [
+            {
+                "moisture": null,
+                "ibuPerAmount": null,
+                "potentialPercentage": 82.5,
+                "notFermentable": false,
+                "amount": 5.41,
+                "usedIn": "",
+                "supplier": "Crisp",
+                "protein": null,
+                "origin": "UK",
+                "substitutes": "",
+                "userNotes": "",
+                "lovibond": 2.8,
+                "_timestamp_ms": 1596360764190,
+                "_rev": "loKFBWD5CuBNJcJX7R3ktLA0Kf1NCm",
+                "percentage": 100,
+                "attenuation": 0.81,
+                "type": "Grain",
+                "costPerAmount": null,
+                "potential": 1.038,
+                "name": "Maris Otter",
+                "diastaticPower": null,
+                "notes": "",
+                "color": 3.045685,
+                "_created": {
+                    "_seconds": 1596360764,
+                    "_nanoseconds": 190000000
+                },
+                "_version": "2.3.5",
+                "_timestamp": {
+                    "_seconds": 1596360764,
+                    "_nanoseconds": 190000000
+                },
+                "_id": "default-e6ba5b8",
+                "inventory": 15.75,
+                "grainCategory": "Base (Maris Otter)"
+            }
+        ]
+    },
+    "yeasts": [
+        {
+            "userNotes": "",
+            "inventory": 5,
+            "minTemp": 15,
+            "type": "Ale",
+            "flocculation": "Medium",
+            "_timestamp": {
+                "_seconds": 1603209023,
+                "_nanoseconds": 705000000
+            },
+            "form": "Dry",
+            "maxAbv": null,
+            "laboratory": "Fermentis",
+            "attenuation": 70,
+            "minAttenuation": null,
+            "name": "SafBrew Specialty Ale",
+            "hidden": false,
+            "_created": {
+                "_seconds": 1596361545,
+                "_nanoseconds": 192000000
+            },
+            "_version": "2.4.7",
+            "_id": "default-c09144",
+            "productId": "T-58",
+            "unit": "pkg",
+            "description": "Specialty yeast selected for its estery somewhat peppery and spicy flavor development (POF+), producing clovelike aroma. Yeast with a medium sedimentation: forms no clumps but a powdery haze when resuspended in the beer.",
+            "_timestamp_ms": 1603209023705,
+            "maxTemp": 20,
+            "_rev": "whNSBV7VBHk5FC6lmrpCZl9eNfhyM4",
+            "bestBeforeDate": null,
+            "fermentsAll": false,
+            "amount": 1,
+            "manufacturingDate": null,
+            "maxAttenuation": null
+        }
+    ],
+    "_rev": "xJZNBBfbLEHCxUhZaluV9b2rYaVfs5",
+    "styleFg": false,
+    "rbRatio": 0.88,
+    "_origin": null,
+    "_version": "2.5.2",
+    "thumb": null,
+    "attenuation": 0.687,
+    "_timestamp_ms": 1609254279112,
+    "defaults": {
+        "preferred": "metric",
+        "gravity": "sgplato",
+        "altitude": "m",
+        "weight": "kg",
+        "hop": "g",
+        "temp": "c",
+        "attenuation": "simple",
+        "carbonation": "vol",
+        "volume": "l",
+        "abv": "simple",
+        "ibu": "tinseth",
+        "color": "ebc",
+        "grainColor": "default",
+        "pressure": "bar"
+    },
+    "path": "",
+    "miscs": [
+        {
+            "amount": 1,
+            "name": "Calcium Chloride (CaCl2)",
+            "notes": "",
+            "concentration": null,
+            "unit": "g",
+            "inventory": 100,
+            "userNotes": "",
+            "waterAdjustment": true,
+            "time": null,
+            "amountPerL": null,
+            "_rev": "Kb6HNUvJk5sdb68eXyT6i1CkpZi104",
+            "_timestamp": {
+                "_seconds": 1604238366,
+                "_nanoseconds": 168000000
+            },
+            "timeIsDays": false,
+            "hidden": false,
+            "substitutes": "",
+            "bestBeforeDate": null,
+            "_id": "default-3b1827",
+            "_version": "2.4.9",
+            "use": "Mash",
+            "type": "Water Agent",
+            "manufacturingDate": null,
+            "_created": {
+                "_seconds": 1604238307,
+                "_nanoseconds": 764000000
+            },
+            "_timestamp_ms": 1604238366168
+        },
+        {
+            "type": "Water Agent",
+            "use": "Mash",
+            "unit": "g",
+            "timeIsDays": false,
+            "_id": "default-bk9j78",
+            "time": null,
+            "name": "Canning Salt (NaCl)",
+            "amount": 1,
+            "waterAdjustment": true
+        },
+        {
+            "_timestamp_ms": 1604238123889,
+            "unit": "g",
+            "hidden": false,
+            "_rev": "T0YyKz7YPdEWPPeWOsLGpiuCU9ct8i",
+            "timeIsDays": false,
+            "_version": "2.4.9",
+            "name": "Gypsum (CaSO4)",
+            "substitutes": "",
+            "amount": 4,
+            "inventory": 100,
+            "waterAdjustment": true,
+            "amountPerL": null,
+            "_created": {
+                "_seconds": 1604238123,
+                "_nanoseconds": 889000000
+            },
+            "type": "Water Agent",
+            "userNotes": "",
+            "manufacturingDate": null,
+            "time": null,
+            "_id": "default-1f88df",
+            "bestBeforeDate": null,
+            "_timestamp": {
+                "_seconds": 1604238123,
+                "_nanoseconds": 889000000
+            },
+            "use": "Mash",
+            "notes": ""
+        },
+        {
+            "_timestamp_ms": 1604238404270,
+            "waterAdjustment": true,
+            "unit": "ml",
+            "inventory": 250,
+            "name": "Lactic Acid",
+            "amountPerL": null,
+            "_id": "default-07adb1",
+            "bestBeforeDate": null,
+            "concentration": 80,
+            "userNotes": "",
+            "_timestamp": {
+                "_seconds": 1604238404,
+                "_nanoseconds": 270000000
+            },
+            "time": null,
+            "manufacturingDate": null,
+            "substitutes": "",
+            "_rev": "z0BPl1ityZjEas8IvG8VFoN2oItcb9",
+            "_created": {
+                "_seconds": 1604238404,
+                "_nanoseconds": 270000000
+            },
+            "timeIsDays": false,
+            "_version": "2.4.9",
+            "use": "Mash",
+            "hidden": false,
+            "amount": 3,
+            "type": "Water Agent",
+            "notes": ""
+        }
+    ],
+    "styleBuGu": true,
+    "carbonation": 2.4,
+    "fgEstimated": 1.019,
+    "primaryTemp": 19,
+    "fermentation": {
+        "steps": [
+            {
+                "stepTemp": 19,
+                "stepTime": 21,
+                "ramp": null,
+                "pressure": null,
+                "displayPressure": null,
+                "displayStepTemp": 19,
+                "type": "Primary"
+            }
+        ],
+        "_id": "default",
+        "name": "Ale"
+    },
+    "hops": [
+        {
+            "usage": "Both",
+            "alpha": 15.6,
+            "_timestamp": {
+                "_seconds": 1596360443,
+                "_nanoseconds": 322000000
+            },
+            "name": "Citra",
+            "use": "Boil",
+            "notes": "",
+            "year": 2020,
+            "substitutes": "",
+            "costPerAmount": 2,
+            "_version": "2.3.5",
+            "_editFlag": true,
+            "temp": null,
+            "usedIn": "",
+            "amount": 4.3,
+            "type": "Pellet",
+            "_rev": "4MO0CF8nobGh2vStrDbb8uqHd5qWcD",
+            "inventory": 859.7,
+            "_created": {
+                "_seconds": 1585893762,
+                "_nanoseconds": 483000000
+            },
+            "origin": "US",
+            "_timestamp_ms": 1596360443322,
+            "time": 60,
+            "_id": "default-8e9450d5",
+            "ibu": 8.3,
+            "userNotes": ""
+        },
+        {
+            "amount": 17,
+            "_id": "default-8e9450d5",
+            "type": "Pellet",
+            "userNotes": "",
+            "origin": "US",
+            "_editFlag": true,
+            "_version": "2.3.5",
+            "inventory": 859.7,
+            "temp": null,
+            "time": 20,
+            "use": "Boil",
+            "alpha": 15.6,
+            "name": "Citra",
+            "_created": {
+                "_seconds": 1585893762,
+                "_nanoseconds": 483000000
+            },
+            "_timestamp_ms": 1596360443322,
+            "usedIn": "",
+            "notes": "",
+            "_timestamp": {
+                "_seconds": 1596360443,
+                "_nanoseconds": 322000000
+            },
+            "substitutes": "",
+            "year": 2020,
+            "ibu": 21.6,
+            "_rev": "4MO0CF8nobGh2vStrDbb8uqHd5qWcD",
+            "usage": "Both",
+            "costPerAmount": 2
+        },
+        {
+            "origin": "US",
+            "notes": "",
+            "name": "Citra",
+            "amount": 25.5,
+            "costPerAmount": 2,
+            "usage": "Both",
+            "usedIn": "",
+            "userNotes": "",
+            "alpha": 15.6,
+            "temp": null,
+            "_rev": "4MO0CF8nobGh2vStrDbb8uqHd5qWcD",
+            "ibu": 22.1,
+            "inventory": 859.7,
+            "_editFlag": true,
+            "_version": "2.3.5",
+            "use": "Boil",
+            "time": 10,
+            "type": "Pellet",
+            "_timestamp": {
+                "_seconds": 1596360443,
+                "_nanoseconds": 322000000
+            },
+            "_timestamp_ms": 1596360443322,
+            "_id": "default-8e9450d5",
+            "_created": {
+                "_seconds": 1585893762,
+                "_nanoseconds": 483000000
+            },
+            "substitutes": "",
+            "year": 2020
+        },
+        {
+            "_id": "default-8e9450d5",
+            "_timestamp": {
+                "_seconds": 1596360443,
+                "_nanoseconds": 322000000
+            },
+            "ibu": 9,
+            "costPerAmount": 2,
+            "substitutes": "",
+            "inventory": 859.7,
+            "use": "Aroma",
+            "amount": 34,
+            "type": "Pellet",
+            "userNotes": "",
+            "time": 20,
+            "name": "Citra",
+            "_rev": "4MO0CF8nobGh2vStrDbb8uqHd5qWcD",
+            "_timestamp_ms": 1596360443322,
+            "year": 2020,
+            "origin": "US",
+            "_editFlag": true,
+            "notes": "",
+            "usedIn": "",
+            "alpha": 15.6,
+            "usage": "Both",
+            "temp": null,
+            "timeUnit": null,
+            "_version": "2.3.5",
+            "_created": {
+                "_seconds": 1585893762,
+                "_nanoseconds": 483000000
+            }
+        },
+        {
+            "amount": 60,
+            "notes": "",
+            "_id": "default-8e9450d5",
+            "alpha": 15.6,
+            "use": "Dry Hop",
+            "_rev": "4MO0CF8nobGh2vStrDbb8uqHd5qWcD",
+            "year": 2020,
+            "timeUnit": "days",
+            "usage": "Both",
+            "_timestamp": {
+                "_seconds": 1596360443,
+                "_nanoseconds": 322000000
+            },
+            "costPerAmount": 2,
+            "actualTime": 1610665200000,
+            "ibu": 0,
+            "day": 17,
+            "usedIn": "",
+            "_editFlag": true,
+            "name": "Citra",
+            "origin": "US",
+            "time": 4,
+            "type": "Pellet",
+            "_created": {
+                "_seconds": 1585893762,
+                "_nanoseconds": 483000000
+            },
+            "_version": "2.3.5",
+            "inventory": 859.7,
+            "substitutes": "",
+            "userNotes": "",
+            "temp": null,
+            "_timestamp_ms": 1596360443322
+        }
+    ],
+    "fermentableIbu": 0,
+    "_share": null,
+    "ibu": 61,
+    "boilSize": 24.53,
+    "styleIbu": true,
+    "batchSize": 17,
+    "fg": 1.019,
+    "postBoilGravity": 1.063226151,
+    "style": {
+        "name": "White IPA",
+        "type": "IPA",
+        "ogMin": 1.056,
+        "buGuMin": 0.66,
+        "lovibondMin": 5,
+        "categoryNumber": "21",
+        "rbrMax": 1.17,
+        "colorMin": 5,
+        "styleLetter": "B",
+        "carbonationStyle": "21B-White",
+        "fgMin": 1.01,
+        "buGuMax": 1.16,
+        "abvMax": 7,
+        "lovibondMax": 8,
+        "fgMax": 1.016,
+        "category": "IPA",
+        "abvMin": 5.5,
+        "rbrMin": 0.67,
+        "ibuMin": 40,
+        "ogMax": 1.065,
+        "colorMax": 8,
+        "styleGuide": "BJCP 2015",
+        "_id": "default-71",
+        "ibuMax": 70
+    },
+    "author": "Fabrice",
+    "preBoilGravity": 1.054,
+    "carbonationStyle": {
+        "carbMin": 2.4,
+        "name": "White IPA-White",
+        "carbMax": 3,
+        "_id": "21B-White"
+    },
+    "hopStandMinutes": 20,
+    "tags": null,
+    "ogPlato": 15.5,
+    "styleOg": true,
+    "ibuFormula": "tinseth",
+    "img": null,
+    "styleCarb": true,
+    "boilTime": 60,
+    "_id": "awjIaObNspBj6hvY27vLvrKN7gqpNW",
+    "styleRbr": true,
+    "mash": {
+        "hidden": false,
+        "_version": "2.5.2",
+        "_timestamp_ms": 1609254193145,
+        "_id": "jugZh0W9Add5684DyVGyRtxCB0bzwD",
+        "_created": {
+            "_seconds": 1609254112,
+            "_nanoseconds": 342000000
+        },
+        "steps": [
+            {
+                "name": "Protéolytique",
+                "stepTemp": 52,
+                "rampTime": null,
+                "type": "Temperature",
+                "stepTime": 5,
+                "displayStepTemp": 52
+            },
+            {
+                "rampTime": null,
+                "displayStepTemp": 62,
+                "stepTemp": 62,
+                "stepTime": 25,
+                "type": "Temperature",
+                "name": "Beta amylase"
+            },
+            {
+                "displayStepTemp": 72,
+                "name": "alpha amylase",
+                "stepTemp": 72,
+                "stepTime": 25,
+                "rampTime": null,
+                "type": "Temperature"
+            },
+            {
+                "type": "Temperature",
+                "name": "Mash out",
+                "rampTime": null,
+                "displayStepTemp": 80,
+                "stepTemp": 80,
+                "stepTime": 10
+            }
+        ],
+        "_timestamp": {
+            "_seconds": 1609254193,
+            "_nanoseconds": 145000000
+        },
+        "name": "High fermentability Fabrice",
+        "_rev": "ZhYx3hzwSgy5nf5z7EW9TjECGgeiMn"
+    },
+    "styleAbv": true,
+    "name": "Citra IPA Clone",
+    "fermentablesTotalAmount": 5.41,
+    "fgFormula": "simple",
+    "hidden": false,
+    "color": 5.6,
+    "firstWortGravity": null,
+    "sumDryHopPerLiter": 3.5294117647058822,
+    "styleConformity": false,
+    "public": false
+}

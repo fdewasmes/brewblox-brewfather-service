@@ -45,7 +45,7 @@ class BrewfatherFeature(features.ServiceFeature):
         self.settings = Settings(MashAutomation(setpoint_device))
         await self.datastore_client.store_settings(self.settings)
 
-        self.spark_client.on_blocks_change(self.spark_blocks_changed)
+        await self.spark_client.on_blocks_change(self.spark_blocks_changed)
 
         await mqtt.listen(app, 'brewcast/state/#', self.on_message)
         await mqtt.subscribe(app, 'brewcast/state/#')
@@ -213,7 +213,8 @@ class BrewfatherFeature(features.ServiceFeature):
 
 @docs(
     tags=['Brewfather'],
-    summary='fetch recipes from Brewfather. You can paginate by using offset and limit query parameters. Both parameters are optional. Offset defaults to 0 and limit to 10',
+    summary='fetch recipes from Brewfather. You can paginate by using offset and limit query parameters.',
+    description='Both parameters are optional. Offset defaults to 0 and limit to 10',
 )
 @routes.get('/recipes')
 async def get_recipes(request: web.Request) -> web.json_response:
