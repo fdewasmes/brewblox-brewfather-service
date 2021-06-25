@@ -41,6 +41,7 @@ async def test_schemas_load_settings():
     except ValidationError:
         raise AssertionError('data should be properly validated')
 
+
 async def test_schemas_load_state():
     state_data = {
         'automation_type': 'MASH',
