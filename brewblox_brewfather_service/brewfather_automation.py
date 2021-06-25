@@ -213,7 +213,19 @@ class BrewfatherFeature(features.ServiceFeature):
 @routes.get('/recipes')
 async def get_recipes(request: web.Request) -> web.json_response:
     LOGGER.debug('REST API: get recipes')
-    recipes = await BrewfatherClient(request.app).recipes()
+    params = request.rel_url.query
+
+    try:
+        offset = params['offset']
+    except KeyError:
+        offset = 0
+
+    try:
+        limit = params['limit']
+    except KeyError:
+        limit = 10
+
+    recipes = await BrewfatherClient(request.app).recipes(offset, limit)
     recipes_name_list = []
     for recipe in recipes:
         recipes_name_list.append({'id': recipe['_id'], 'name': recipe['name']})
