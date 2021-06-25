@@ -1,3 +1,8 @@
+"""
+Brewfather API client. All calls are stateless.
+Depends on environment variables to get API credentials. These are added to the app object on service main function.
+"""
+
 from aiohttp import BasicAuth
 from brewblox_service import http
 

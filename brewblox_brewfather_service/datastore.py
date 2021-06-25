@@ -1,5 +1,5 @@
 """
-Dataclasses and Datastore API client to store and load configuration
+Datastore API client to store and load configuration
 """
 
 

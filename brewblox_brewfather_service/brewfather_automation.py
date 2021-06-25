@@ -1,5 +1,6 @@
 """
-A Brewfather API client
+Integration of mash automation based on Brewfather recipes
+In order to get started, load_recipe(self, recipe_id: str) should be called and then start_mash()
 """
 
 import asyncio
@@ -53,10 +54,6 @@ class BrewfatherFeature(features.ServiceFeature):
         """ do nothing yet"""
         LOGGER.info(f'Shutting down {self}')
 
-    async def get_recipes(self) -> list:
-        recipes = await self.bfclient.recipes()
-        return recipes
-
     async def load_recipe(self, recipe_id: str):
         """load a recipe from Brewfather, and get ready for automation"""
         recipe = await self.bfclient.recipe(recipe_id)
@@ -77,6 +74,9 @@ class BrewfatherFeature(features.ServiceFeature):
             LOGGER.info(f'step: {step.name} - {step.stepTemp}°C - {step.stepTime} minutes')
 
     async def start_automated_mash(self):
+        """
+        Starts automation from the previously loaded recipe.
+        """
         state = CurrentState(AutomationType.MASH, -1, None)
         await self.datastore_client.store_state(state)
         schema = CurrentStateSchema()
@@ -92,10 +92,13 @@ class BrewfatherFeature(features.ServiceFeature):
                                    'state': state_str
                                }
                            })
-        await self.proceed_to_next_step()
+        await self.__proceed_to_next_step()
 
-    async def proceed_to_next_step(self):
-
+    async def __proceed_to_next_step(self):
+        """
+        load recipe next temperature step
+        and adjust mash temperature (heat) setpoint according to recipe next step
+        """
         mash = await self.datastore_client.load_mash()
         state = await self.datastore_client.load_state()
 
@@ -108,7 +111,7 @@ class BrewfatherFeature(features.ServiceFeature):
             state.step_index = current_step
             state.automation_state = AutomationState.HEAT
             target_temp = step.stepTemp
-            await self.adjust_mash_setpoint(target_temp)
+            await self.__adjust_mash_setpoint(target_temp)
             LOGGER.debug(f'new state: {state}')
             await self.datastore_client.store_state(state)
             log_msg = f'{state.step.name}: heating to {state.step.stepTemp}°C'
@@ -129,7 +132,7 @@ class BrewfatherFeature(features.ServiceFeature):
         except IndexError:
             LOGGER.warn('current recipe has no more mash steps')
 
-    async def adjust_mash_setpoint(self, target_temp):
+    async def __adjust_mash_setpoint(self, target_temp):
         try:
             block = await asyncio.wait_for(self.spark_client.read(self.settings.mashAutomation.setpointDevice.id),
                                            timeout=5.0)
@@ -143,17 +146,19 @@ class BrewfatherFeature(features.ServiceFeature):
         except asyncio.TimeoutError as error:
             raise asyncio.TimeoutError('Failed to communicate with spark in a timely manner') from error
 
-    async def start_timer(self):
+    async def __start_timer(self):
         state = await self.datastore_client.load_state()
         state.automation_state = AutomationState.REST
         state.step_start_time = datetime.utcnow()
         state.step_end_time = state.step_start_time + timedelta(minutes=state.step.stepTime)
+
+        loop = asyncio.get_event_loop()
+        loop.call_later(state.step.stepTime*60, asyncio.create_task, self.__end_timer(state.step))
+        await self.datastore_client.store_state(state)
+
         log_msg = f'{state.step.name}: Starting timer {state.step.stepTime} minutes ({state.step.stepTemp}°C), '
         log_msg += f'expected end time: {state.step_end_time}'
         LOGGER.info(log_msg)
-        loop = asyncio.get_event_loop()
-        loop.call_later(state.step.stepTime*60, asyncio.create_task, self.end_timer(state.step))
-        await self.datastore_client.store_state(state)
 
         schema = CurrentStateSchema()
         state_str = schema.dump(state)
@@ -167,7 +172,7 @@ class BrewfatherFeature(features.ServiceFeature):
                                 }
                            })
 
-    async def end_timer(self, step: MashStep):
+    async def __end_timer(self, step: MashStep):
         state = await self.datastore_client.load_state()
 
         log_msg = f'{step.name}: {step.stepTime} minutes timer ({step.stepTemp}°C) is over, proceeding to next step'
@@ -185,7 +190,7 @@ class BrewfatherFeature(features.ServiceFeature):
                                     'state': state_str
                                 }
                            })
-        await self.proceed_to_next_step()
+        await self.__proceed_to_next_step()
 
     async def on_message(self, topic: str, message: dict):
         """ nothing to do yet"""
@@ -201,14 +206,14 @@ class BrewfatherFeature(features.ServiceFeature):
                 updated_temp = temp_device_block['data']['value']['value']
                 LOGGER.info(f'--> updated_temp: {updated_temp}, expected: {expected_temp}')
                 if updated_temp >= expected_temp:
-                    await self.start_timer()
+                    await self.__start_timer()
             except IndexError:
                 LOGGER.warn('attempting to reach mash step while it does not exist')
 
 
 @docs(
     tags=['Brewfather'],
-    summary='fetch recipes',
+    summary='fetch recipes from Brewfather. You can paginate by using offset and limit query parameters. Both parameters are optional. Offset defaults to 0 and limit to 10',
 )
 @routes.get('/recipes')
 async def get_recipes(request: web.Request) -> web.json_response:
@@ -234,7 +239,7 @@ async def get_recipes(request: web.Request) -> web.json_response:
 
 @docs(
     tags=['Brewfather'],
-    summary='fetch one recipe',
+    summary='fetch one recipe from Brewfather',
 )
 @routes.get('/recipe/{recipe_id}')
 async def get_recipe(request: web.Request) -> web.json_response:
@@ -257,7 +262,7 @@ async def start_mash_automation(request: web.Request) -> web.json_response:
 
 @docs(
     tags=['Brewfather'],
-    summary='load recipe',
+    summary='load recipe and get ready for automating the mash. Once done you can call startmash endpoint',
 )
 @routes.get('/recipe/{recipe_id}/load')
 async def load_recipe(request: web.Request) -> web.json_response:
