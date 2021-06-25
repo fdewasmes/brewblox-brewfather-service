@@ -10,7 +10,7 @@ from aiohttp_apispec import docs
 from brewblox_service import brewblox_logger, features, mqtt
 
 from brewblox_brewfather_service.schemas import (AutomationState, AutomationType, CurrentStateSchema,
-                                                 Device, MashAutomation, CurrentState, Settings)
+                                                 Device, MashAutomation, CurrentState, MashStep, Settings)
 from brewblox_brewfather_service.datastore import DatastoreClient
 from brewblox_brewfather_service import schemas
 from brewblox_brewfather_service.api.brewfather_api_client import BrewfatherClient
@@ -51,38 +51,44 @@ class BrewfatherFeature(features.ServiceFeature):
 
     async def shutdown(self, app: web.Application):
         """ do nothing yet"""
+        LOGGER.info(f'Shutting down {self}')
 
     async def get_recipes(self) -> list:
         recipes = await self.bfclient.recipes()
         return recipes
 
-    async def get_recipe(self, recipe_id: str) -> dict:
-        recipe = await self.bfclient.recipe(recipe_id)
-        return recipe
-
     async def load_recipe(self, recipe_id: str):
-        """load a recipe, and get ready to start automation"""
-        mash_data = await self.get_mash_data(recipe_id)
+        """load a recipe from Brewfather, and get ready for automation"""
+        recipe = await self.bfclient.recipe(recipe_id)
+
+        LOGGER.debug(f'Loaded recipe from Brewfather: {recipe}')
+
+        mash_data = recipe['mash']
         schema = schemas.MashSchema()
         mash = schema.load(mash_data)
 
         number_of_steps = len(mash.steps)
         if number_of_steps == 0:
-            raise ValueError
+            raise ValueError('Recipe contains no mash step')
 
         await self.datastore_client.store_mash_steps(mash_data)
+        LOGGER.info(f'Loaded recipe {mash.name} from Brewfather containing {len(mash.steps)} mash steps')
+        for step in mash.steps:
+            LOGGER.info(f'step: {step.name} - {step.stepTemp}°C - {step.stepTime} minutes')
 
     async def start_automated_mash(self):
         state = CurrentState(AutomationType.MASH, -1, None)
         await self.datastore_client.store_state(state)
         schema = CurrentStateSchema()
         state_str = schema.dump(state)
+        log_msg = '== Starting mash =='
+        LOGGER.info(log_msg)
         await mqtt.publish(self.app,
                            self.topic,
                            {
                                'key': self.name,
                                'data': {
-                                   'status_msg': '== MASH START ==',
+                                   'status_msg': log_msg,
                                    'state': state_str
                                }
                            })
@@ -93,7 +99,7 @@ class BrewfatherFeature(features.ServiceFeature):
         mash = await self.datastore_client.load_mash()
         state = await self.datastore_client.load_state()
 
-        LOGGER.info(f'Proceeding to next step from current state: {state}')
+        LOGGER.debug(f'Proceeding to next step from current state: {state}')
         current_step = state.step_index
         current_step += 1
         try:
@@ -103,8 +109,10 @@ class BrewfatherFeature(features.ServiceFeature):
             state.automation_state = AutomationState.HEAT
             target_temp = step.stepTemp
             await self.adjust_mash_setpoint(target_temp)
-            LOGGER.info(f'current state: {state}')
+            LOGGER.debug(f'new state: {state}')
             await self.datastore_client.store_state(state)
+            log_msg = f'{state.step.name}: heating to {state.step.stepTemp}°C'
+            LOGGER.info(log_msg)
 
             # let others know we procedeed to next step
             schema = CurrentStateSchema()
@@ -114,7 +122,7 @@ class BrewfatherFeature(features.ServiceFeature):
                                {
                                     'key': self.name,
                                     'data': {
-                                        'status_msg': 'Proceeded to next step',
+                                        'status_msg': log_msg,
                                         'state': state_str
                                     }
                                })
@@ -135,24 +143,16 @@ class BrewfatherFeature(features.ServiceFeature):
         except asyncio.TimeoutError as error:
             raise asyncio.TimeoutError('Failed to communicate with spark in a timely manner') from error
 
-    async def get_mash_data(self, recipe_id: str) -> dict:
-        recipe = await self.get_recipe(recipe_id)
-        mash_data = recipe['mash']
-        return mash_data
-
-    async def on_message(self, topic: str, message: dict):
-        """ nothing to do yet"""
-
     async def start_timer(self):
         state = await self.datastore_client.load_state()
         state.automation_state = AutomationState.REST
         state.step_start_time = datetime.utcnow()
         state.step_end_time = state.step_start_time + timedelta(minutes=state.step.stepTime)
-        log_msg = f'Starting timer duration {state.step.stepTime} for step {state.step.name}, '
+        log_msg = f'{state.step.name}: Starting timer {state.step.stepTime} minutes ({state.step.stepTemp}°C), '
         log_msg += f'expected end time: {state.step_end_time}'
         LOGGER.info(log_msg)
         loop = asyncio.get_event_loop()
-        loop.call_later(state.step.stepTime*60, asyncio.create_task, self.end_timer())
+        loop.call_later(state.step.stepTime*60, asyncio.create_task, self.end_timer(state.step))
         await self.datastore_client.store_state(state)
 
         schema = CurrentStateSchema()
@@ -162,14 +162,33 @@ class BrewfatherFeature(features.ServiceFeature):
                            {
                                 'key': self.name,
                                 'data': {
-                                    'status_msg': f'rest {state.step.stepTime} for {state.step.name}',
+                                    'status_msg': log_msg,
                                     'state': state_str
                                 }
                            })
 
-    async def end_timer(self):
-        LOGGER.info('Timer is over, proceeding to next step')
+    async def end_timer(self, step: MashStep):
+        state = await self.datastore_client.load_state()
+
+        log_msg = f'{step.name}: {step.stepTime} minutes timer ({step.stepTemp}°C) is over, proceeding to next step'
+        LOGGER.info(log_msg)
+
+        schema = CurrentStateSchema()
+        state_str = schema.dump(state)
+
+        await mqtt.publish(self.app,
+                           self.topic,
+                           {
+                                'key': self.name,
+                                'data': {
+                                    'status_msg': log_msg,
+                                    'state': state_str
+                                }
+                           })
         await self.proceed_to_next_step()
+
+    async def on_message(self, topic: str, message: dict):
+        """ nothing to do yet"""
 
     async def spark_blocks_changed(self, blocks):
         state = await self.datastore_client.load_state()
@@ -193,6 +212,7 @@ class BrewfatherFeature(features.ServiceFeature):
 )
 @routes.get('/recipes')
 async def get_recipes(request: web.Request) -> web.json_response:
+    LOGGER.debug('REST API: get recipes')
     recipes = await BrewfatherClient(request.app).recipes()
     recipes_name_list = []
     for recipe in recipes:
@@ -206,6 +226,7 @@ async def get_recipes(request: web.Request) -> web.json_response:
 )
 @routes.get('/recipe/{recipe_id}')
 async def get_recipe(request: web.Request) -> web.json_response:
+    LOGGER.debug('REST API: get recipe')
     recipe = await BrewfatherClient(request.app).recipe(request.match_info['recipe_id'])
     return web.json_response(recipe)
 
@@ -216,7 +237,7 @@ async def get_recipe(request: web.Request) -> web.json_response:
 )
 @routes.get('/startmash')
 async def start_mash_automation(request: web.Request) -> web.json_response:
-    LOGGER.info('starting mash')
+    LOGGER.debug('REST API: starting mash')
     feature = fget(request.app)
     await feature.start_automated_mash()
     return web.json_response()
@@ -228,10 +249,8 @@ async def start_mash_automation(request: web.Request) -> web.json_response:
 )
 @routes.get('/recipe/{recipe_id}/load')
 async def load_recipe(request: web.Request) -> web.json_response:
-    LOGGER.info(f'loading recipe {request.match_info["recipe_id"]}')
+    LOGGER.debug(f'REST API: loading recipe {request.match_info["recipe_id"]}')
     feature = fget(request.app)
-    LOGGER.info(feature)
-
     await feature.load_recipe(request.match_info['recipe_id'])
     return web.json_response()
 

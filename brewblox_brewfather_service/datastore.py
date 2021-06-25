@@ -32,7 +32,7 @@ class DatastoreClient:
 
     async def store_mash_steps(self, mash_steps: list):
         """ store recipe mash steps in datastore for later use """
-        LOGGER.info(f'storing mash steps: {mash_steps}')
+        LOGGER.debug(f'storing mash steps: {mash_steps}')
 
         session = http.session(self.app)
         url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_SET}'
@@ -49,7 +49,7 @@ class DatastoreClient:
 
     async def store_settings(self, settings: schemas.Settings):
         """ store automation settings in datastore for later use """
-        LOGGER.info(f'storing settings: {settings}')
+        LOGGER.debug(f'storing settings: {settings}')
 
         session = http.session(self.app)
         url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_SET}'
@@ -65,14 +65,13 @@ class DatastoreClient:
 
     async def store_state(self, state: schemas.CurrentState):
         """ store automation state in datastore for later use """
-        LOGGER.info(f'storing state: {state}')
+        LOGGER.debug(f'storing state: {state}')
         session = http.session(self.app)
         url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_SET}'
         schema = schemas.CurrentStateSchema()
         state_dump = schema.dump(state)
 
         payload = {'value': {'namespace': self._namespace, 'id': self._state_id, 'data': state_dump}}
-        LOGGER.info(payload)
         response = await session.post(url, json=payload)
 
         await response.json()
