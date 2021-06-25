@@ -32,23 +32,28 @@ class BrewfatherFeature(features.ServiceFeature):
 
         self.bfclient = BrewfatherClient(self.app)
         self.spark_client = features.get(app, BlocksApi)
-        self.datastore_client = DatastoreClient(self.app)
+        ready_event = self.spark_client.is_ready
 
         config = app['config']
         service_id = config['mash_service_id']
         setpoint_device_id = config['mash_setpoint_device']
+        setpoint_device = Device(service_id, setpoint_device_id)
+        self.settings = Settings(MashAutomation(setpoint_device))
+        self.datastore_client = DatastoreClient(self.app)
+
+        await asyncio.create_task(self.finish_init(ready_event))
+        self.spark_client.on_blocks_change(self.spark_blocks_changed)
 
         self.name = self.app['config']['name']
         self.topic = f'brewcast/state/{self.name}'
 
-        setpoint_device = Device(service_id, setpoint_device_id)
-        self.settings = Settings(MashAutomation(setpoint_device))
-        await self.datastore_client.store_settings(self.settings)
-
-        await self.spark_client.on_blocks_change(self.spark_blocks_changed)
-
         await mqtt.listen(app, 'brewcast/state/#', self.on_message)
         await mqtt.subscribe(app, 'brewcast/state/#')
+
+    async def finish_init(self, event):
+        LOGGER.info('spark service is ready')
+        await event.wait()
+        await self.datastore_client.store_settings(self.settings)
 
     async def shutdown(self, app: web.Application):
         """ do nothing yet"""
