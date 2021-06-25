@@ -12,10 +12,11 @@ class BrewfatherClient:
         self.token = app['BREWFATHER_TOKEN']
         self.app = app
 
-    async def recipes(self) -> list:
+    async def recipes(self, offset: int = 0, limit: int = 10) -> list:
         url = self.BASE_URL + '/recipes'
+        params = {'offset': offset, 'limit': limit}
         session = http.session(self.app)
-        response = await session.get(url, auth=BasicAuth(self.userid, self.token))
+        response = await session.get(url, params=params, auth=BasicAuth(self.userid, self.token))
         all_recipes = await response.json()
         return all_recipes
 
