@@ -51,9 +51,10 @@ class BrewfatherFeature(features.ServiceFeature):
         await mqtt.subscribe(app, 'brewcast/state/#')
 
     async def finish_init(self, event):
-        LOGGER.info('spark service is ready')
-        await event.wait()
-        await self.datastore_client.store_settings(self.settings)
+        if event is not None:
+            await event.wait()
+            LOGGER.info('spark service is ready')
+            await self.datastore_client.store_settings(self.settings)
 
     async def shutdown(self, app: web.Application):
         """ do nothing yet"""

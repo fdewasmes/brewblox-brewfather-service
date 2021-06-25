@@ -1,13 +1,17 @@
 """
 Checks whether we can call the hello endpoint.
 """
-
+from brewblox_brewfather_service.api.brewfather_api_client import BrewfatherClient
+import json
 import pytest
+import asyncio
 from os import getenv
 from brewblox_service import http, mqtt
 from aresponses import ResponsesMockServer
 from brewblox_brewfather_service import brewfather_automation
-from mock import AsyncMock
+from mock import AsyncMock, PropertyMock
+import mock
+from brewblox_spark_api.blocks_api import BlocksApi
 
 TESTED = brewfather_automation.__name__
 
@@ -31,14 +35,9 @@ def m_mqtt(mocker):
 
 
 @pytest.fixture
-async def app(app):
+def started_app(app, m_mqtt, aresponses: ResponsesMockServer):
     http.setup(app)
     mqtt.setup(app)
-    return app
-
-
-@pytest.fixture
-def started_app(app, m_mqtt, aresponses: ResponsesMockServer):
     app['BREWFATHER_USER_ID'] = getenv('BREWFATHER_USER_ID')
     app['BREWFATHER_TOKEN'] = getenv('BREWFATHER_TOKEN')
     aresponses.add(
@@ -94,3 +93,29 @@ async def test_get_recipes(app, client, aresponses: ResponsesMockServer):
 
     aresponses.assert_plan_strictly_followed()
     assert len(response) == 2"""
+
+
+async def test_load_recipe(started_app, aresponses: ResponsesMockServer):
+
+    feature = brewfather_automation.fget(started_app)
+    """feature.bfclient = BrewfatherClient(started_app)
+
+    with mock.patch('brewblox_spark_api.blocks_api.BlocksApi.is_ready', new_callable=PropertyMock) as mock_ready_event:
+        event = asyncio.Event()
+        mock_ready_event.return_value = event
+
+    await feature.startup(started_app)
+
+    with open('test/sample_recipe.json') as json_file:
+        data = json.load(json_file)
+
+    aresponses.add(
+        host_pattern='api.brewfather.app',
+        path_pattern='/v1/recipes/id1',
+        method_pattern='GET',
+        response=data,
+    )
+
+    await feature.load_recipe('id1')
+    aresponses.assert_plan_strictly_followed()"""
+
