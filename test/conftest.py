@@ -8,6 +8,8 @@ import logging
 
 import pytest
 from brewblox_service import service
+from brewblox_spark_api.blocks_api import BlocksApi
+from brewblox_brewfather_service import brewfather_automation
 
 from brewblox_brewfather_service.__main__ import create_parser
 
@@ -74,4 +76,5 @@ def client(app, aiohttp_client, loop):
 
     Any tests wishing to add custom behavior to app can override the fixture
     """
+
     return loop.run_until_complete(aiohttp_client(app))
