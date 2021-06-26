@@ -9,13 +9,17 @@ from datetime import datetime, timedelta
 from aiohttp import web
 from aiohttp_apispec import docs
 from brewblox_service import brewblox_logger, features, mqtt
-
-from brewblox_brewfather_service.schemas import (AutomationState, AutomationType, CurrentStateSchema,
-                                                 Device, MashAutomation, CurrentState, MashStep, Settings)
-from brewblox_brewfather_service.datastore import DatastoreClient
-from brewblox_brewfather_service import schemas
-from brewblox_brewfather_service.api.brewfather_api_client import BrewfatherClient
 from brewblox_spark_api.blocks_api import BlocksApi
+
+from brewblox_brewfather_service import schemas
+from brewblox_brewfather_service.api.brewfather_api_client import \
+    BrewfatherClient
+from brewblox_brewfather_service.datastore import DatastoreClient
+from brewblox_brewfather_service.schemas import (AutomationState,
+                                                 AutomationType, CurrentState,
+                                                 CurrentStateSchema, Device,
+                                                 MashAutomation, MashStep,
+                                                 Settings)
 
 LOGGER = brewblox_logger(__name__)
 
@@ -44,7 +48,7 @@ class BrewfatherFeature(features.ServiceFeature):
         self.settings = Settings(MashAutomation(setpoint_device))
         self.datastore_client = DatastoreClient(app)
 
-        await asyncio.create_task(self.finish_init())
+        asyncio.create_task(self.finish_init())
         self.spark_client.on_blocks_change(self.spark_blocks_changed)
 
         self.name = self.app['config']['name']
@@ -54,7 +58,7 @@ class BrewfatherFeature(features.ServiceFeature):
         await mqtt.subscribe(app, 'brewcast/state/#')
 
     async def finish_init(self):
-        if self.finished:
+        if not self.finished:
             await self.spark_client.is_ready.wait()
             LOGGER.info(f'Finishing {self} init')
             await self.datastore_client.store_settings(self.settings)
@@ -68,7 +72,7 @@ class BrewfatherFeature(features.ServiceFeature):
         """load a recipe from Brewfather, and get ready for automation"""
         recipe = await self.bfclient.recipe(recipe_id)
 
-        LOGGER.debug(f'Loaded recipe from Brewfather: {recipe}')
+        # LOGGER.debug(f'Loaded recipe from Brewfather: {recipe}')
 
         mash_data = recipe['mash']
         schema = schemas.MashSchema()
@@ -133,11 +137,11 @@ class BrewfatherFeature(features.ServiceFeature):
             await mqtt.publish(self.app,
                                self.topic,
                                {
-                                    'key': self.name,
-                                    'data': {
-                                        'status_msg': log_msg,
-                                        'state': state_str
-                                    }
+                                   'key': self.name,
+                                   'data': {
+                                       'status_msg': log_msg,
+                                       'state': state_str
+                                   }
                                })
         except IndexError:
             LOGGER.warn('current recipe has no more mash steps')
@@ -175,11 +179,11 @@ class BrewfatherFeature(features.ServiceFeature):
         await mqtt.publish(self.app,
                            self.topic,
                            {
-                                'key': self.name,
-                                'data': {
-                                    'status_msg': log_msg,
-                                    'state': state_str
-                                }
+                               'key': self.name,
+                               'data': {
+                                   'status_msg': log_msg,
+                                   'state': state_str
+                               }
                            })
 
     async def __end_timer(self, step: MashStep):
@@ -194,11 +198,11 @@ class BrewfatherFeature(features.ServiceFeature):
         await mqtt.publish(self.app,
                            self.topic,
                            {
-                                'key': self.name,
-                                'data': {
-                                    'status_msg': log_msg,
-                                    'state': state_str
-                                }
+                               'key': self.name,
+                               'data': {
+                                   'status_msg': log_msg,
+                                   'state': state_str
+                               }
                            })
         await self.__proceed_to_next_step()
 

@@ -3,20 +3,28 @@ Checks whether we can call the hello endpoint.
 """
 
 import json
-import pytest
-import asyncio
-
 from os import getenv
-from brewblox_service import http, mqtt
+
+import pytest
 from aresponses import ResponsesMockServer
-from brewblox_brewfather_service import brewfather_automation
+from brewblox_service import http
+from brewblox_service.testing import response
+from brewblox_spark_api import blocks_api
 from mock import AsyncMock
 
+from brewblox_brewfather_service import brewfather_automation
 
 TESTED = brewfather_automation.__name__
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope='session')
+def sample_recipe():
+    with open('test/sample_recipe.json') as json_file:
+        data = json.load(json_file)
+    return data
+
+
+@pytest.fixture
 def m_mqtt(mocker):
     """
     We don't want to create and connect to a MQTT broker here.
@@ -35,21 +43,44 @@ def m_mqtt(mocker):
 
 
 @pytest.fixture
-async def started_app(app, m_mqtt, aresponses: ResponsesMockServer):
-    http.setup(app)
-    mqtt.setup(app)
+def m_api_mqtt(mocker):
+    m = mocker.patch(blocks_api.__name__ + '.mqtt')
+
+    # async functions must be mocked explicitly
+    m.publish = AsyncMock()
+    m.listen = AsyncMock()
+    m.unlisten = AsyncMock()
+    m.subscribe = AsyncMock()
+    m.unsubscribe = AsyncMock()
+
+    return m
+
+
+@pytest.fixture
+def app(app, m_mqtt, m_api_mqtt):
     app['BREWFATHER_USER_ID'] = getenv('BREWFATHER_USER_ID')
     app['BREWFATHER_TOKEN'] = getenv('BREWFATHER_TOKEN')
 
+    http.setup(app)
     brewfather_automation.setup(app)
-    brewfather_automation.finished = True
+
+    # Skip finish_init function
+    # We'd rather test this manually
+    brewfather_automation.fget_brewfather(app).finished = True
 
     return app
 
 
-async def test_get_recipes(started_app, client, aresponses: ResponsesMockServer):
+async def test_get_recipes(app, client, aresponses: ResponsesMockServer):
+    # Required to avoid spurious intercepts by aresponses
     aresponses.add(
-        host_pattern='https://api.brewfather.app',
+        path_pattern='/recipes',
+        method_pattern='GET',
+        response=aresponses.passthrough,
+    )
+    # Called by the /recipes endpoint
+    aresponses.add(
+        host_pattern='api.brewfather.app',
         path_pattern='/v1/recipes',
         method_pattern='GET',
         response=[
@@ -71,40 +102,32 @@ async def test_get_recipes(started_app, client, aresponses: ResponsesMockServer)
             }
         ],
     )
-    res = await client.get('/recipes')
-    assert res.status == 200
-    response = await res.json()
+
+    data = await response(client.get('/recipes'))
+    assert len(data) == 2
 
     aresponses.assert_plan_strictly_followed()
-    assert len(response) == 2
 
 
-async def test_load_recipe(started_app, client, aresponses: ResponsesMockServer):
-    feature = brewfather_automation.fget_brewfather(started_app)
-    blocksapi = brewfather_automation.fget_blocksapi(started_app)
-
-    r = blocksapi.is_ready
-    r.set()
-    with open('test/sample_recipe.json') as json_file:
-        data = json.load(json_file)
-
-    mash_str = json.dumps(data['mash'])
+async def test_load_recipe(app, client, sample_recipe, aresponses: ResponsesMockServer):
+    # Required to avoid spurious intercepts by aresponses
+    aresponses.add(
+        path_pattern='/recipe/id1/load',
+        method_pattern='GET',
+        response=aresponses.passthrough,
+    )
+    # Called by the /recipe/{id}/load endpoint
     aresponses.add(
         host_pattern='api.brewfather.app',
         path_pattern='/v1/recipes/id1',
         method_pattern='GET',
-        response=data,
+        response=sample_recipe,
     )
     aresponses.add(
-        host_pattern='history:5000',
         path_pattern='/history/datastore/set',
         method_pattern='POST',
-        response={
-            'id': 'mash',
-            'namespace': 'brewfather',
-            'data': mash_str
-        }
+        response={},
     )
 
-    await feature.load_recipe('id1')
+    await response(client.get('/recipe/id1/load'))
     aresponses.assert_plan_strictly_followed()
