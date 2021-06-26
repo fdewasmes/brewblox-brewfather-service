@@ -54,7 +54,7 @@ class BrewfatherFeature(features.ServiceFeature):
         await mqtt.subscribe(app, 'brewcast/state/#')
 
     async def finish_init(self):
-        await self.ready_event.wait()
+        #await self.ready_event.wait()
         LOGGER.info(f'Finishing {self} init')
         await self.datastore_client.store_settings(self.settings)
 
