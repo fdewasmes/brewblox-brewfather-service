@@ -24,24 +24,27 @@ routes = web.RouteTableDef()
 
 class BrewfatherFeature(features.ServiceFeature):
 
+    def __init__(self, app: web.Application):
+        super().__init__(app)
+
     async def startup(self, app: web.Application):
         LOGGER.info(f'Starting {self}')
 
         # Get values from config
         LOGGER.info(self.app['config'])
 
-        self.bfclient = BrewfatherClient(self.app)
+        self.bfclient = BrewfatherClient(app)
         self.spark_client = features.get(app, BlocksApi)
-        ready_event = self.spark_client.is_ready
+        self.ready_event = self.spark_client.is_ready
 
         config = app['config']
         service_id = config['mash_service_id']
         setpoint_device_id = config['mash_setpoint_device']
         setpoint_device = Device(service_id, setpoint_device_id)
         self.settings = Settings(MashAutomation(setpoint_device))
-        self.datastore_client = DatastoreClient(self.app)
+        self.datastore_client = DatastoreClient(app)
 
-        await asyncio.create_task(self.finish_init(ready_event))
+        await asyncio.create_task(self.finish_init())
         self.spark_client.on_blocks_change(self.spark_blocks_changed)
 
         self.name = self.app['config']['name']
@@ -50,11 +53,10 @@ class BrewfatherFeature(features.ServiceFeature):
         await mqtt.listen(app, 'brewcast/state/#', self.on_message)
         await mqtt.subscribe(app, 'brewcast/state/#')
 
-    async def finish_init(self, event):
-        if event is not None:
-            await event.wait()
-            LOGGER.info('spark service is ready')
-            await self.datastore_client.store_settings(self.settings)
+    async def finish_init(self):
+        await self.ready_event.wait()
+        LOGGER.info(f'Finishing {self} init')
+        await self.datastore_client.store_settings(self.settings)
 
     async def shutdown(self, app: web.Application):
         """ do nothing yet"""
@@ -262,7 +264,7 @@ async def get_recipe(request: web.Request) -> web.json_response:
 @routes.get('/startmash')
 async def start_mash_automation(request: web.Request) -> web.json_response:
     LOGGER.debug('REST API: starting mash')
-    feature = fget(request.app)
+    feature = fget_brewfather(request.app)
     await feature.start_automated_mash()
     return web.json_response()
 
@@ -274,7 +276,7 @@ async def start_mash_automation(request: web.Request) -> web.json_response:
 @routes.get('/recipe/{recipe_id}/load')
 async def load_recipe(request: web.Request) -> web.json_response:
     LOGGER.debug(f'REST API: loading recipe {request.match_info["recipe_id"]}')
-    feature = fget(request.app)
+    feature = fget_brewfather(request.app)
     await feature.load_recipe(request.match_info['recipe_id'])
     return web.json_response()
 
@@ -285,5 +287,9 @@ def setup(app: web.Application):
     features.add(app, BrewfatherFeature(app))
 
 
-def fget(app: web.Application) -> BrewfatherFeature:
+def fget_brewfather(app: web.Application) -> BrewfatherFeature:
     return features.get(app, BrewfatherFeature)
+
+
+def fget_blocksapi(app: web.Application) -> BlocksApi:
+    return features.get(app, BlocksApi)
