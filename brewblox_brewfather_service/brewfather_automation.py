@@ -35,7 +35,7 @@ class BrewfatherFeature(features.ServiceFeature):
 
         self.bfclient = BrewfatherClient(app)
         self.spark_client = features.get(app, BlocksApi)
-        self.ready_event = self.spark_client.is_ready
+        self.finished = False
 
         config = app['config']
         service_id = config['mash_service_id']
@@ -54,9 +54,11 @@ class BrewfatherFeature(features.ServiceFeature):
         await mqtt.subscribe(app, 'brewcast/state/#')
 
     async def finish_init(self):
-        #await self.ready_event.wait()
-        LOGGER.info(f'Finishing {self} init')
-        await self.datastore_client.store_settings(self.settings)
+        if self.finished:
+            await self.spark_client.is_ready.wait()
+            LOGGER.info(f'Finishing {self} init')
+            await self.datastore_client.store_settings(self.settings)
+            self.finished = True
 
     async def shutdown(self, app: web.Application):
         """ do nothing yet"""

@@ -4,11 +4,14 @@ Checks whether we can call the hello endpoint.
 
 import json
 import pytest
+import asyncio
+
 from os import getenv
 from brewblox_service import http, mqtt
 from aresponses import ResponsesMockServer
 from brewblox_brewfather_service import brewfather_automation
 from mock import AsyncMock
+
 
 TESTED = brewfather_automation.__name__
 
@@ -32,37 +35,19 @@ def m_mqtt(mocker):
 
 
 @pytest.fixture
-def started_app(app, m_mqtt, aresponses: ResponsesMockServer):
+async def started_app(app, m_mqtt, aresponses: ResponsesMockServer):
     http.setup(app)
     mqtt.setup(app)
     app['BREWFATHER_USER_ID'] = getenv('BREWFATHER_USER_ID')
     app['BREWFATHER_TOKEN'] = getenv('BREWFATHER_TOKEN')
-    aresponses.add(
-        host_pattern='history:5000',
-        path_pattern='/history/datastore/set',
-        method_pattern='POST',
-        response={
-            'id': 'settings',
-            'namespace': 'brewfather',
-            'data': {
-                'mashAutomation': {
-                    'setpointDevice': {
-                        'service_id': 'spark-one',
-                        'id': 'HERMS MT Setpoint'
-                    }
-                }
-            }
-        },
-    )
+
     brewfather_automation.setup(app)
+    brewfather_automation.finished = True
 
     return app
 
 
 async def test_get_recipes(started_app, client, aresponses: ResponsesMockServer):
-    blocksapi = brewfather_automation.fget_blocksapi(started_app)
-    blocksapi.is_ready.set()
-
     aresponses.add(
         host_pattern='https://api.brewfather.app',
         path_pattern='/v1/recipes',
@@ -95,9 +80,11 @@ async def test_get_recipes(started_app, client, aresponses: ResponsesMockServer)
 
 
 async def test_load_recipe(started_app, client, aresponses: ResponsesMockServer):
-    blocksapi = brewfather_automation.fget_blocksapi(started_app)
     feature = brewfather_automation.fget_brewfather(started_app)
-    blocksapi.is_ready.set()
+    blocksapi = brewfather_automation.fget_blocksapi(started_app)
+
+    r = blocksapi.is_ready
+    r.set()
     with open('test/sample_recipe.json') as json_file:
         data = json.load(json_file)
 
