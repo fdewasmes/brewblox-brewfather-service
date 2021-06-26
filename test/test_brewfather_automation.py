@@ -59,7 +59,9 @@ def started_app(app, m_mqtt, aresponses: ResponsesMockServer):
     return app
 
 
-async def test_get_recipes(app, client, aresponses: ResponsesMockServer):
+async def test_get_recipes(started_app, client, aresponses: ResponsesMockServer):
+    blocksapi = brewfather_automation.fget_blocksapi(started_app)
+    blocksapi.is_ready.set()
 
     aresponses.add(
         host_pattern='https://api.brewfather.app',
@@ -84,24 +86,18 @@ async def test_get_recipes(app, client, aresponses: ResponsesMockServer):
             }
         ],
     )
-    """res = await client.get('/recipes')
+    res = await client.get('/recipes')
     assert res.status == 200
     response = await res.json()
 
     aresponses.assert_plan_strictly_followed()
-    assert len(response) == 2"""
+    assert len(response) == 2
 
 
-async def test_load_recipe(started_app, aresponses: ResponsesMockServer):
-    httpfeature = http.get_client(started_app)
+async def test_load_recipe(started_app, client, aresponses: ResponsesMockServer):
     blocksapi = brewfather_automation.fget_blocksapi(started_app)
     feature = brewfather_automation.fget_brewfather(started_app)
-    await httpfeature.startup(started_app)
-
-    await blocksapi.startup(started_app)
     blocksapi.is_ready.set()
-    await feature.startup(started_app)
-
     with open('test/sample_recipe.json') as json_file:
         data = json.load(json_file)
 
