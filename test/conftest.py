@@ -3,13 +3,11 @@ Master file for pytest fixtures.
 Any fixtures declared here are available to all test functions in this directory.
 """
 
-import os
 import logging
+import os
 
 import pytest
 from brewblox_service import service
-from brewblox_spark_api.blocks_api import BlocksApi
-from brewblox_brewfather_service import brewfather_automation
 
 from brewblox_brewfather_service.__main__ import create_parser
 
