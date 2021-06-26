@@ -1,17 +1,14 @@
 """
 Checks whether we can call the hello endpoint.
 """
-from brewblox_brewfather_service.api.brewfather_api_client import BrewfatherClient
+
 import json
 import pytest
-import asyncio
 from os import getenv
 from brewblox_service import http, mqtt
 from aresponses import ResponsesMockServer
 from brewblox_brewfather_service import brewfather_automation
-from mock import AsyncMock, PropertyMock
-import mock
-from brewblox_spark_api.blocks_api import BlocksApi
+from mock import AsyncMock
 
 TESTED = brewfather_automation.__name__
 
@@ -96,26 +93,35 @@ async def test_get_recipes(app, client, aresponses: ResponsesMockServer):
 
 
 async def test_load_recipe(started_app, aresponses: ResponsesMockServer):
+    httpfeature = http.get_client(started_app)
+    blocksapi = brewfather_automation.fget_blocksapi(started_app)
+    feature = brewfather_automation.fget_brewfather(started_app)
+    await httpfeature.startup(started_app)
 
-    feature = brewfather_automation.fget(started_app)
-    """feature.bfclient = BrewfatherClient(started_app)
-
-    with mock.patch('brewblox_spark_api.blocks_api.BlocksApi.is_ready', new_callable=PropertyMock) as mock_ready_event:
-        event = asyncio.Event()
-        mock_ready_event.return_value = event
-
+    await blocksapi.startup(started_app)
+    blocksapi.is_ready.set()
     await feature.startup(started_app)
 
     with open('test/sample_recipe.json') as json_file:
         data = json.load(json_file)
 
+    mash_str = json.dumps(data['mash'])
     aresponses.add(
         host_pattern='api.brewfather.app',
         path_pattern='/v1/recipes/id1',
         method_pattern='GET',
         response=data,
     )
+    aresponses.add(
+        host_pattern='history:5000',
+        path_pattern='/history/datastore/set',
+        method_pattern='POST',
+        response={
+            'id': 'mash',
+            'namespace': 'brewfather',
+            'data': mash_str
+        }
+    )
 
     await feature.load_recipe('id1')
-    aresponses.assert_plan_strictly_followed()"""
-
+    aresponses.assert_plan_strictly_followed()

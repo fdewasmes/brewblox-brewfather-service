@@ -127,7 +127,7 @@ aiomqtt = ">=0.1.1,<0.2.0"
 
 [[package]]
 name = "brewblox-spark-api"
-version = "0.1.0"
+version = "0.1.1"
 description = "Client-side API for consuming Spark blocks"
 category = "main"
 optional = false
@@ -532,7 +532,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<4"
-content-hash = "356592733cd54469c43912d120cb2d82a6c6b544999eb4b66493de9f013135a0"
+content-hash = "732f8882180e54b1d49d42086b59dfce4ec4b575499ce97dcaeb532ae78b6c05"
 
 [metadata.files]
 aiohttp = [
@@ -609,8 +609,8 @@ brewblox-service = [
     {file = "brewblox_service-0.32.2-py3-none-any.whl", hash = "sha256:c4ee96714c0b1a86107e873dbd52c4701c38828f83e47bc23638934cd05d1aab"},
 ]
 brewblox-spark-api = [
-    {file = "brewblox-spark-api-0.1.0.tar.gz", hash = "sha256:b79e6a27a5077dc00010223eb0fc129f50494a9a435dab49c24aae9ca3543d25"},
-    {file = "brewblox_spark_api-0.1.0-py3-none-any.whl", hash = "sha256:645c4ed294a2ec5f78e612ffa9053a7f3594cc93c984b55d950e515d3d42b941"},
+    {file = "brewblox-spark-api-0.1.1.tar.gz", hash = "sha256:e8adacab6f9297ac1c49c9af024c82fa7e31b6dce01d2f1530de9743a3edbcd5"},
+    {file = "brewblox_spark_api-0.1.1-py3-none-any.whl", hash = "sha256:37c8d89366ec71dc1672d07bc2764fe15f0fcbaadae1832d2b8b7553439f9b9a"},
 ]
 chardet = [
     {file = "chardet-3.0.4-py2.py3-none-any.whl", hash = "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"},
