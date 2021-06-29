@@ -128,6 +128,12 @@ async def test_load_recipe(app, client, sample_recipe, aresponses: ResponsesMock
         method_pattern='POST',
         response={},
     )
+    aresponses.add(
+        path_pattern='/history/datastore/set',
+        method_pattern='POST',
+        response={},
+    )
 
     await response(client.get('/recipe/id1/load'))
     aresponses.assert_plan_strictly_followed()
+
