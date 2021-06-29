@@ -10,15 +10,16 @@ from marshmallow.validate import OneOf
 
 
 class AutomationType(Enum):
-    MASH = 1
-    BOIL = 2
-    SPARGE = 3
-    FERMENTATION = 4
+    MASH = 10
+    BOIL = 20
+    SPARGE = 30
+    FERMENTATION = 40
 
 
 class AutomationState(Enum):
-    HEAT = 1
-    REST = 2
+    STANDBY = 10
+    HEAT = 20
+    REST = 30
 
 
 class Device:
@@ -52,17 +53,23 @@ class Mash:
 
 class CurrentState:
     def __init__(self, automation_type: AutomationType,
-                 step_index: int,
-                 step: MashStep,
-                 step_start_time=datetime.utcnow(),
-                 step_end_time=datetime.utcnow(),
-                 automation_state: AutomationState = AutomationState.REST):
+                 recipe_id: str,
+                 recipe_name: str,
+                 mash_start_time: datetime = None,
+                 step_index: int = -1,
+                 step: MashStep = None,
+                 step_start_time=None,
+                 step_end_time=None,
+                 automation_state: AutomationState = AutomationState.STANDBY):
         self.automation_type = automation_type
         self.automation_state = automation_state
         self.step_index = step_index
         self.step = step
         self.step_start_time = step_start_time
         self.step_end_time = step_end_time
+        self.mash_start_time = mash_start_time
+        self.recipe_id = recipe_id
+        self.recipe_name = recipe_name
 
     def __repr__(self):
         obj_rep = f'<CurrentState(type={self.automation_type!r}, state={self.automation_state!r}, '
@@ -146,6 +153,9 @@ class CurrentStateSchema(Schema):
     step = fields.Nested(MashStepSchema, allow_none=True, allow_null=True)
     step_start_time = fields.DateTime(allow_none=True, allow_null=True)
     step_end_time = fields.DateTime(allow_none=True, allow_null=True)
+    mash_start_time = fields.DateTime(allow_none=True, allow_null=True)
+    recipe_id = fields.String(required=True)
+    recipe_name = fields.String(required=True)
 
     @post_load
     def make_current_state(self, data, **kwargs):

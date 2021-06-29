@@ -68,11 +68,15 @@ class BrewfatherFeature(features.ServiceFeature):
         """ do nothing yet"""
         LOGGER.info(f'Shutting down {self}')
 
+    async def get_state(self) -> CurrentStateSchema:
+        state = await self.datastore_client.load_state()
+        return state
+
     async def load_recipe(self, recipe_id: str):
         """load a recipe from Brewfather, and get ready for automation"""
         recipe = await self.bfclient.recipe(recipe_id)
-
-        # LOGGER.debug(f'Loaded recipe from Brewfather: {recipe}')
+        recipe_name = recipe['name']
+        LOGGER.debug(f'Loaded recipe from Brewfather: {recipe_name}')
 
         mash_data = recipe['mash']
         schema = schemas.MashSchema()
@@ -83,15 +87,18 @@ class BrewfatherFeature(features.ServiceFeature):
             raise ValueError('Recipe contains no mash step')
 
         await self.datastore_client.store_mash_steps(mash_data)
-        LOGGER.info(f'Loaded recipe {mash.name} from Brewfather containing {len(mash.steps)} mash steps')
+        LOGGER.info(f'Loaded recipe {recipe_name} from Brewfather containing {len(mash.steps)} mash steps')
         for step in mash.steps:
             LOGGER.info(f'step: {step.name} - {step.stepTemp}°C - {step.stepTime} minutes')
+        state = CurrentState(AutomationType.MASH, recipe_id, recipe_name)
+        await self.datastore_client.store_state(state)
 
     async def start_automated_mash(self):
         """
         Starts automation from the previously loaded recipe.
         """
-        state = CurrentState(AutomationType.MASH, -1, None)
+        state = await self.datastore_client.load_state()
+        state.mash_start_time = datetime.utcnow()
         await self.datastore_client.store_state(state)
         schema = CurrentStateSchema()
         state_str = schema.dump(state)
@@ -273,6 +280,20 @@ async def start_mash_automation(request: web.Request) -> web.json_response:
     feature = fget_brewfather(request.app)
     await feature.start_automated_mash()
     return web.json_response()
+
+
+@docs(
+    tags=['Brewfather'],
+    summary='get automation state',
+)
+@routes.get('/state')
+async def get_state(request: web.Request) -> web.json_response:
+    LOGGER.debug('REST API: get state')
+    feature = fget_brewfather(request.app)
+    state = await feature.get_state()
+    schema = CurrentStateSchema()
+    state_str = schema.dump(state)
+    return web.json_response(state_str)
 
 
 @docs(
