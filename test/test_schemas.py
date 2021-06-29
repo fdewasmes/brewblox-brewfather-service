@@ -56,7 +56,9 @@ async def test_schemas_load_state():
         },
         'step_index': 2,
         'automation_state': 'HEAT',
-        'step_end_time': '2021-06-25T05:13:26.230131'
+        'step_end_time': '2021-06-25T05:13:26.230131',
+        'recipe_id': 'xxx',
+        'recipe_name': 'sour'
     }
     schema = schemas.CurrentStateSchema()
     try:
