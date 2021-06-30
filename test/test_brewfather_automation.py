@@ -136,4 +136,3 @@ async def test_load_recipe(app, client, sample_recipe, aresponses: ResponsesMock
 
     await response(client.get('/recipe/id1/load'))
     aresponses.assert_plan_strictly_followed()
-
