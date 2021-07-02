@@ -35,7 +35,7 @@ version: '3.7'
 services:
   # <= Other services in your config go here
   brewfather:
-    image: fdewasmes/brewblox-brewfather-service:local
+    image: fdewasmes/brewblox-brewfather-service:develop
     command: '--mash-setpoint-device="SETPOINT_DEVICE" --mash-service-id=SPARK_SERVICE'
     environment:
       - BREWFATHER_USER_ID
