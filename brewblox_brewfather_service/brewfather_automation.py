@@ -5,7 +5,6 @@ In order to get started, load_recipe(self, recipe_id: str) should be called and 
 
 import asyncio
 import re
-import math
 from datetime import datetime, timedelta
 
 from aiohttp import web
@@ -18,8 +17,8 @@ from brewblox_brewfather_service.datastore import DatastoreClient
 from brewblox_brewfather_service.schemas import (AutomationState,
                                                  AutomationStage, CurrentState,
                                                  CurrentStateSchema, Device,
-                                                 MashAutomation, MashStep, MashStepSchema,
-                                                 Settings, Timer, TimerSchema)
+                                                 MashAutomation, MashStepSchema,
+                                                 Settings, Timer)
 
 LOGGER = brewblox_logger(__name__)
 
@@ -32,7 +31,6 @@ class BrewfatherFeature(repeater.RepeaterFeature):
         super().__init__(app)
 
     async def prepare(self):
-        super.__prepare__(self)
         LOGGER.info(f'Starting {self}')
 
         # Get values from config
@@ -48,6 +46,7 @@ class BrewfatherFeature(repeater.RepeaterFeature):
         setpoint_device = Device(service_id, setpoint_device_id)
         self.settings = Settings(MashAutomation(setpoint_device))
         self.datastore_client = DatastoreClient(self.app)
+        self.timer_task = None
 
         asyncio.create_task(self.finish_init())
         self.spark_client.on_blocks_change(self.spark_blocks_changed)
@@ -65,13 +64,9 @@ class BrewfatherFeature(repeater.RepeaterFeature):
             await self.datastore_client.store_settings(self.settings)
             self.finished = True
 
-    async def shutdown(self, app: web.Application):
-        """ do nothing yet"""
-        LOGGER.info(f'Shutting down {self}')
-
     async def run(self):
         await asyncio.sleep(10)
-        if not self.spark_client.is_ready:
+        if not self.spark_client.is_ready.is_set():
             return
         if not self.bfclient.brewtracker_data:
             return
@@ -100,6 +95,10 @@ class BrewfatherFeature(repeater.RepeaterFeature):
             if len(stage['steps']) == 0:
                 raise ValueError(f'Stage {stage["name"]} contains empty steps array.')
 
+        # Cancel any timer task before goin any further
+        if self.timer_task is not None:
+            self.timer_task.cancel()
+
         state = CurrentState(AutomationStage.MASH, batch_id, '', recipe_name, brewtracker)
         await self.datastore_client.store_state(state)
 
@@ -114,12 +113,13 @@ class BrewfatherFeature(repeater.RepeaterFeature):
         await mqtt.publish(self.app,
                            self.topic,
                            {
+                               'type': 'brewfather.state',
                                'key': self.name,
                                'data': {
                                    'status_msg': log_msg,
                                    'state': state_str
                                }
-                           })
+                           }, retain=True)
 
     async def start_automated_mash(self):
         """
@@ -144,6 +144,9 @@ class BrewfatherFeature(repeater.RepeaterFeature):
         stage_index = state.stage_index
         state.step_index += 1
         stage = state.brewtracker['stages'][stage_index]
+
+        if self.timer_task is not None:
+            self.timer_task.cancel()
 
         try:
             schema = MashStepSchema()
@@ -220,7 +223,10 @@ class BrewfatherFeature(repeater.RepeaterFeature):
         state.timer = timer
 
         loop = asyncio.get_event_loop()
-        loop.call_later(state.timer.duration, asyncio.create_task, self.__end_timer())
+        # cancel any previously scheduled event
+        if self.timer_task is not None:
+            self.timer_task.cancel()
+        self.timer_task = loop.call_later(state.timer.duration, asyncio.create_task, self.__end_timer())
         await self.datastore_client.store_state(state)
 
         log_msg = f'Starting timer {state.timer.duration} seconds ({state.step.value}°C), '
