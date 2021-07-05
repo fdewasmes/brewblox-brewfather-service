@@ -66,7 +66,7 @@ async def test_schemas_load_state():
         state = schema.load(state_data)
         assert state is not None, 'state should not be of None type'
         assert state.automation_type is not None, 'automation_type should not be of None type'
-        assert state.automation_type == schemas.AutomationType.MASH
+        assert state.automation_type == schemas.AutomationStage.MASH
         assert state.automation_state is not None, 'automation_type should not be of None type'
         assert state.automation_state == schemas.AutomationState.HEAT
         assert state.step_start_time is None

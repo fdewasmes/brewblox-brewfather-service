@@ -6,14 +6,14 @@ from enum import Enum
 from datetime import datetime
 from marshmallow_enum import EnumField
 from marshmallow import Schema, ValidationError, fields, post_load, EXCLUDE
-from marshmallow.validate import OneOf
 
 
-class AutomationType(Enum):
+class AutomationStage(Enum):
     MASH = 10
-    BOIL = 20
-    SPARGE = 30
-    FERMENTATION = 40
+    SPARGE = 20
+    BOIL = 30
+    HOPSTAND = 40
+    FERMENTATION = 50
 
 
 class AutomationState(Enum):
@@ -29,52 +29,59 @@ class Device:
 
 
 class MashStep:
-    def __init__(self, stepTemp, rampTime, stepTime, type, name, displayStepTemp):
-        self.stepTemp = stepTemp
-        self.rampTime = rampTime
-        self.stepTime = stepTime
+    def __init__(self, description, type, name=None, pauseBefore=None, value=0, tooltip=None, duration=0):
+        self.duration = duration
+        self.description = description
+        self.value = value
+        self.tooltip = tooltip
         self.type = type
         self.name = name
-        self.displayStepTemp = displayStepTemp
+        self.pauseBefore = pauseBefore
 
     def __repr__(self):
-        return '<MashStep(name={self.name!r}, temp={self.stepTemp!r}, time={self.stepTime!r})>'.format(self=self)
+        obj_rep = f'<MashStep(name={self.name!r}, description={self.description!r}, '
+        obj_rep += f'duration={self.duration!r}, pauseBefore={self.pauseBefore!r})>'
+        return obj_rep
 
 
-class Mash:
-    def __init__(self, name, steps, _id):
-        self.name = name
-        self.steps = steps
-        self._id = _id
+class Timer:
+    def __init__(self, start_time, duration, expected_end_time):
+        self.start_time = start_time
+        self.duration = duration
+        self.expected_end_time = expected_end_time
 
     def __repr__(self):
-        return f'<Mash(name={self.name!r}, steps={self.steps!r})>'
+        obj_rep = f'<Timer(start_time={self.start_time!r}, duration={self.duration!r}, '
+        obj_rep += f'expected_end_time={self.expected_end_time!r})>'
+        return obj_rep
 
 
 class CurrentState:
-    def __init__(self, automation_type: AutomationType,
+    def __init__(self, automation_stage: AutomationStage,
+                 batch_id: str,
                  recipe_id: str,
                  recipe_name: str,
+                 brewtracker: dict = None,
                  mash_start_time: datetime = None,
+                 automation_state: AutomationState = AutomationState.STANDBY,
+                 stage_index: int = -1,
                  step_index: int = -1,
                  step: MashStep = None,
-                 step_start_time=None,
-                 step_end_time=None,
-                 automation_state: AutomationState = AutomationState.STANDBY):
-        self.automation_type = automation_type
+                 timer: Timer = None):
+        self.automation_stage = automation_stage
         self.automation_state = automation_state
-        self.step_index = step_index
-        self.step = step
-        self.step_start_time = step_start_time
-        self.step_end_time = step_end_time
         self.mash_start_time = mash_start_time
+        self.batch_id = batch_id
         self.recipe_id = recipe_id
         self.recipe_name = recipe_name
+        self.brewtracker = brewtracker
+        self.stage_index = stage_index
+        self.step_index = step_index
+        self.step = step
+        self.timer = timer
 
     def __repr__(self):
-        obj_rep = f'<CurrentState(type={self.automation_type!r}, state={self.automation_state!r}, '
-        obj_rep += f'index={self.step_index!r}, step={self.step!r}, start={self.step_start_time!r}, '
-        obj_rep += f'end={self.step_end_time!r})>'
+        obj_rep = f'<CurrentState(type={self.automation_stage!r}, state={self.automation_state!r}>'
         return obj_rep
 
 
@@ -121,41 +128,44 @@ class SettingsSchema(Schema):
 
 
 class MashStepSchema(Schema):
-    stepTemp = fields.Int(required=True)
-    rampTime = fields.Raw(required=True, allow_none=True)
-    stepTime = fields.Int(required=True)
-    type = fields.String(required=True, validate=OneOf(['Temperature']))
-    name = fields.String(required=True)
-    displayStepTemp = fields.Int(required=True)
+    class Meta:
+        unknown = EXCLUDE
+
+    duration = fields.Int(required=False)
+    description = fields.String(required=True)
+    value = fields.Int(required=False)
+    tooltip = fields.String(required=False, allow_null=True, allow_none=True)
+    type = fields.String(required=True)
+    name = fields.String(required=False, allow_null=True, allow_none=True)
+    pauseBefore = fields.Boolean(required=False, allow_null=True, allow_none=True)
 
     @post_load
     def make_mash_step(self, data, **kwargs):
         return MashStep(**data)
 
 
-class MashSchema(Schema):
-    class Meta:
-        unknown = EXCLUDE
-
-    name = fields.String(required=True)
-    steps = fields.Nested(MashStepSchema, many=True, required=True)
-    _id = fields.String(required=True)
+class TimerSchema(Schema):
+    start_time = fields.DateTime(allow_none=True, allow_null=True)
+    duration = fields.Int(required=False)
+    expected_end_time = fields.DateTime(allow_none=True, allow_null=True)
 
     @post_load
-    def make_mash(self, data, **kwargs):
-        return Mash(**data)
+    def make_timer(self, data, **kwargs):
+        return Timer(**data)
 
 
 class CurrentStateSchema(Schema):
-    automation_type = EnumField(AutomationType, required=True)
+    automation_stage = EnumField(AutomationStage, required=True)
     automation_state = EnumField(AutomationState, required=True)
-    step_index = fields.Int(required=True)
-    step = fields.Nested(MashStepSchema, allow_none=True, allow_null=True)
-    step_start_time = fields.DateTime(allow_none=True, allow_null=True)
-    step_end_time = fields.DateTime(allow_none=True, allow_null=True)
     mash_start_time = fields.DateTime(allow_none=True, allow_null=True)
-    recipe_id = fields.String(required=True)
+    batch_id = fields.String(required=True)
+    recipe_id = fields.String(required=False)
     recipe_name = fields.String(required=True)
+    brewtracker = fields.Dict(required=False)
+    stage_index = fields.Int(required=True)
+    step_index = fields.Int(required=True)
+    step = fields.Nested(MashStepSchema, required=False, allow_none=True, allow_null=True)
+    timer = fields.Nested(TimerSchema, required=False, allow_none=True, allow_null=True)
 
     @post_load
     def make_current_state(self, data, **kwargs):

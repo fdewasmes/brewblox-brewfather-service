@@ -71,3 +71,4 @@ target/
 
 # Python package files for building Docker
 docker/pkg/*
+.vscode/launch.json

@@ -22,6 +22,7 @@ class DatastoreClient:
         self.app = app
         self._namespace = 'brewfather'
         self._mash_steps_id = 'mash'
+        self._brewtracker_id = 'brewtracker'
         self._settings_id = 'settings'
         self._mash_log_id = 'mashlog'
         self._state_id = 'state'
@@ -30,22 +31,6 @@ class DatastoreClient:
         self._settings = None
         self._mash_steps = None
 
-    async def store_mash_steps(self, mash_steps: list):
-        """ store recipe mash steps in datastore for later use """
-        LOGGER.debug(f'storing mash steps: {mash_steps}')
-
-        session = http.session(self.app)
-        url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_SET}'
-
-        schema = schemas.MashSchema()
-        schema.validate(mash_steps)
-        self.mash_steps = schema.load(mash_steps)
-
-        payload = {'value': {'namespace': self._namespace, 'id': self._mash_steps_id, 'data': mash_steps}}
-        response = await session.post(url, json=payload)
-
-        await response.json()
-        self._mash_steps = mash_steps
 
     async def store_settings(self, settings: schemas.Settings):
         """ store automation settings in datastore for later use """
@@ -95,20 +80,25 @@ class DatastoreClient:
         self._state = state
         return state
 
-    async def load_mash(self) -> schemas.Mash:
-        """ load mash from store """
+    async def load_brewtracker(self) -> dict:
+        """ load brewtracker from store """
         session = http.session(self.app)
         url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_GET}'
 
-        payload = {'namespace': self._namespace, 'id': self._mash_steps_id}
+        payload = {'namespace': self._namespace, 'id': self._brewtracker_id}
         response = await session.post(url, json=payload)
-        raw_mash_data = await response.json()
+        raw_brewtracker_data = await response.json()
 
-        # check configuration
-        mash_data = raw_mash_data['value']['data']
-        schema = schemas.MashSchema()
-        schema.validate(mash_data)
+        return raw_brewtracker_data
 
-        mash = schema.load(mash_data)
-        self._mash = mash
-        return mash
+    async def store_brewtracker(self, brewtracker: dict) -> dict:
+        """ store brewtracker to store """
+        session = http.session(self.app)
+        url = f'{self.DATASTORE_API_BASE_URL}/{self.DATASTORE_API_PATH_SET}'
+
+        payload = {'value': {'namespace': self._namespace, 'id': self._state_id, 'data': brewtracker}}
+        response = await session.post(url, json=payload)
+
+        raw_brewtracker_data = await response.json()
+
+        return raw_brewtracker_data
