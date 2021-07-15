@@ -8,8 +8,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4"
-brewblox-service = "^0.32.2"
-brewblox-spark-api = "^0.1.1"
+brewblox-service = "^0.33.0"
+brewblox-spark-api = "^0.2.0"
 marshmallow-enum = "^1.5.1"
 
 [tool.poetry.dev-dependencies]

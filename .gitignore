@@ -72,3 +72,4 @@ target/
 # Python package files for building Docker
 docker/pkg/*
 .vscode/launch.json
+brewblox_brewfather_service/.DS_Store

@@ -25,7 +25,6 @@ class BrewfatherClient(repeater.RepeaterFeature):
         self._tracking = False
 
     async def prepare(self):
-        super.__prepare__(self)
         LOGGER.info(f'Starting {self}')
 
     async def shutdown(self, app: web.Application):
@@ -42,11 +41,10 @@ class BrewfatherClient(repeater.RepeaterFeature):
     async def run(self):
         # TODO: allow to setup wake interval
         await asyncio.sleep(30)
-        if self._tracking:
-            if self._brewtracker_data is not None:
-                batch_id = self._brewtracker_data['_id']
-                self._brewtracker_data = await self.brewtracker(batch_id)
-                LOGGER.debug('refreshed brewtracker')
+        if self._tracking and self._brewtracker_data is not None:
+            batch_id = self._brewtracker_data['_id']
+            self._brewtracker_data = await self.brewtracker(batch_id)
+            LOGGER.debug('refreshed brewtracker')
 
     async def recipes(self, offset: int = 0, limit: int = 10) -> list:
         url = self.BASE_URL + '/recipes'
@@ -64,10 +62,10 @@ class BrewfatherClient(repeater.RepeaterFeature):
         return recipe
 
     async def batches(self, status: str = None) -> dict:
-        # we support only planning, brewing and fermenting as other status are irrelevant for us
-        valid_status = {'Planning', 'Brewing', 'Fermenting'}
         params = {}
         if status is not None:
+            # we support only planning, brewing and fermenting as other status are irrelevant for us
+            valid_status = {'Planning', 'Brewing', 'Fermenting'}
             if status not in valid_status:
                 raise ValueError(f'status must be on of {valid_status}')
             params = {'status': status}

@@ -39,6 +39,7 @@ class BrewfatherFeature(repeater.RepeaterFeature):
         self.bfclient = features.get(self.app, BrewfatherClient)
         self.spark_client = features.get(self.app, BlocksApi)
         self.finished = False
+        self.spark_connected = False
 
         config = self.app['config']
         service_id = config['mash_service_id']
@@ -62,14 +63,52 @@ class BrewfatherFeature(repeater.RepeaterFeature):
             await self.spark_client.is_ready.wait()
             LOGGER.info(f'Finishing {self} init')
             await self.datastore_client.store_settings(self.settings)
+            await self.restore_timer()
             self.finished = True
 
     async def run(self):
         await asyncio.sleep(10)
+
         if not self.spark_client.is_ready.is_set():
+            if self.spark_connected:
+                LOGGER.warn('Spark is not reachable, waiting to reconnect')
+                self.spark_connected = False
             return
         if not self.bfclient.brewtracker_data:
             return
+
+        if not self.spark_connected:
+            LOGGER.warn('Spark connection re-established, waiting to reconnect')
+            self.spark_connected = True
+            await self.restore_timer()
+
+    async def before_shutdown(self, app: web.Application):
+        if self.timer_task is not None:
+            self.timer_task.cancel()
+        return await super().before_shutdown(app)
+
+    async def restore_timer(self):
+        """ restores timer if need be. This can happen in several situations when we loose connection or power """
+        state = await self.get_state()
+        if (
+            state.automation_state == AutomationState.REST
+            and self.timer_task is None
+        ):
+            LOGGER.warn('missing a timer for rest state. Recreating one from currently known state.')
+
+            if state.timer is None or state.timer.expected_end_time is None:
+                raise ValueError('inconsistent state')
+
+            if state.timer.expected_end_time < datetime.utcnow():
+                LOGGER.warn('Timer was supposed to time out in the past. Proceeding to next step.')
+                await self.proceed_to_next_step()
+                return
+
+            # we don't modify state and just restore timer
+            self.__schedule_wake_up(state.timer.expected_end_time)
+            log_msg = f'Restoring timer for REST step @({state.step.value}°C), '
+            log_msg += f'expected end time: {state.timer.expected_end_time}'
+            LOGGER.info(log_msg)
 
     async def get_state(self) -> CurrentStateSchema:
         state = await self.datastore_client.load_state()
@@ -125,7 +164,7 @@ class BrewfatherFeature(repeater.RepeaterFeature):
         """
         Starts automation from the previously loaded recipe.
         """
-        state = await self.datastore_client.load_state()
+        state = await self.get_state()
         state.mash_start_time = datetime.utcnow()
         state.stage_index = 0
         await self.datastore_client.store_state(state)
@@ -138,7 +177,7 @@ class BrewfatherFeature(repeater.RepeaterFeature):
         load recipe next temperature step
         and adjust mash temperature (heat) setpoint according to recipe next step
         """
-        state = await self.datastore_client.load_state()
+        state = await self.get_state()
         LOGGER.debug(f'Proceeding to next step from current state: {state}')
 
         stage_index = state.stage_index
@@ -160,7 +199,6 @@ class BrewfatherFeature(repeater.RepeaterFeature):
                     await self.publish_state(state, f'Step: {step.name} complete, proceeding to next step.')
                     await self.datastore_client.store_state(state)
                     await self.proceed_to_next_step()
-                    return
                 else:
                     # pauseBefore explicitly set to True
                     # we must pause,
@@ -185,7 +223,7 @@ class BrewfatherFeature(repeater.RepeaterFeature):
                         log_msg = f'mash automation paused: {description}'
                     await self.datastore_client.store_state(state)
                     await self.publish_state(state, log_msg)
-                    return
+                return
             else:
                 if step.duration is not None:
                     duration = step.duration
@@ -215,26 +253,35 @@ class BrewfatherFeature(repeater.RepeaterFeature):
             raise asyncio.TimeoutError('Failed to communicate with spark in a timely manner') from error
 
     async def __start_timer(self, duration: int):
-        state = await self.datastore_client.load_state()
+        state = await self.get_state()
         state.automation_state = AutomationState.REST
         timer_start_time = datetime.utcnow()
         timer_expected_end_time = timer_start_time + timedelta(seconds=duration)
         timer = Timer(timer_start_time, duration, timer_expected_end_time)
         state.timer = timer
 
-        loop = asyncio.get_event_loop()
-        # cancel any previously scheduled event
-        if self.timer_task is not None:
-            self.timer_task.cancel()
-        self.timer_task = loop.call_later(state.timer.duration, asyncio.create_task, self.__end_timer())
+        self.__schedule_wake_up(timer_expected_end_time)
         await self.datastore_client.store_state(state)
 
         log_msg = f'Starting timer {state.timer.duration} seconds ({state.step.value}°C), '
         log_msg += f'expected end time: {state.timer.expected_end_time}'
         await self.publish_state(state, log_msg)
 
+    def __schedule_wake_up(self, end_time: datetime):
+        loop = asyncio.get_event_loop()
+        # cancel any previously scheduled event
+        if self.timer_task is not None:
+            self.timer_task.cancel()
+        now = datetime.utcnow()
+        if now > end_time:
+            LOGGER.error('Attempting to schedule a timer in the past')
+            raise ValueError('Attempting to schedule a timer in the past')
+        delay = end_time - now
+
+        self.timer_task = loop.call_later(delay.total_seconds(), asyncio.create_task, self.__end_timer())
+
     async def __end_timer(self):
-        state = await self.datastore_client.load_state()
+        state = await self.get_state()
         log_msg = f'{state.timer.duration} seconds timer ({state.step.value}°C) is over, proceeding to next step'
         state.timer = None
         await self.datastore_client.store_state(state)
@@ -245,7 +292,7 @@ class BrewfatherFeature(repeater.RepeaterFeature):
         """ nothing to do yet"""
 
     async def spark_blocks_changed(self, blocks):
-        state = await self.datastore_client.load_state()
+        state = await self.get_state()
         if state.automation_state == AutomationState.HEAT:
             try:
                 expected_temp = state.step.value
@@ -280,9 +327,10 @@ async def get_recipes(request: web.Request) -> web.json_response:
         limit = 10
 
     recipes = await BrewfatherClient(request.app).recipes(offset, limit)
-    recipes_name_list = []
-    for recipe in recipes:
-        recipes_name_list.append({'id': recipe['_id'], 'name': recipe['name']})
+    recipes_name_list = [
+        {'id': recipe['_id'], 'name': recipe['name']} for recipe in recipes
+    ]
+
     return web.json_response(recipes_name_list)
 
 
@@ -307,7 +355,6 @@ async def start_mash_automation(request: web.Request) -> web.json_response:
     feature = fget_brewfather(request.app)
     await feature.start_automated_mash()
     return web.json_response()
-
 
 
 @docs(
@@ -364,7 +411,8 @@ async def get_batches(request: web.Request) -> web.json_response:
 
 @docs(
     tags=['Brewfather'],
-    summary='load batch and get ready for automating the mash. Once done if brewblox is master, you can call startmash endpoint, if slave brewblox will poll brewfather brewtracker',
+    summary='load batch and get ready for automating the mash.',
+    description='Once done if brewblox is master, you can call startmash endpoint'
 )
 @routes.get('/load/{batch_id}')
 async def load_batch(request: web.Request) -> web.json_response:
