@@ -1,0 +1,250 @@
+{
+    "notify": true,
+    "hidden": false,
+    "completed": false,
+    "_id": "iyB6qYPEppcjaicBVV8fso42slU3rX",
+    "_rev": "bjbxEktHJ2tZRFTnHT7errxcuKEsZV",
+    "enabled": true,
+    "active": false,
+    "alarm": true,
+    "stage": 0,
+    "name": "Batch #7",
+    "stages": [
+        {
+            "name": "Mash",
+            "step": 0,
+            "paused": true,
+            "steps": [
+                {
+                    "time": 3900,
+                    "description": "Start Mash Tracker",
+                    "pauseBefore": false,
+                    "type": "mash",
+                    "name": "Start",
+                    "duration": 0,
+                    "priority": 10
+                },
+                {
+                    "value": 52,
+                    "tooltip": "Heat to 56.6 °C",
+                    "description": "Heat <b>15.15 L</b> mash water to 56.6 °C",
+                    "pauseBefore": true,
+                    "duration": 0,
+                    "priority": 10,
+                    "time": 3900,
+                    "type": "event",
+                    "name": "Mash"
+                },
+                {
+                    "description": "<b>65 min mash additions:</b></br> <i><b>1 g</b> Calcium Chloride (CaCl2)</i> </br><i><b>1 g</b> Canning Salt (NaCl)</i> </br><i><b>4 g</b> Gypsum (CaSO4)</i> </br><i><b>3 ml</b> Lactic Acid</i> </br><i><b>5.41 kg</b> Maris Otter</i>",
+                    "time": 3900,
+                    "tooltip": "65 min mash additions",
+                    "type": "event",
+                    "pauseBefore": true,
+                    "priority": 9
+                },
+                {
+                    "name": "Protéolytique",
+                    "type": "mash",
+                    "time": 3900,
+                    "description": "Protéolytique - 5 min @ 52 °C",
+                    "duration": 300,
+                    "tooltip": "5 min @ 52 °C",
+                    "value": 52
+                },
+                {
+                    "pauseBefore": true,
+                    "time": 3600,
+                    "value": 62,
+                    "name": "Beta amylase",
+                    "type": "ramp",
+                    "duration": 0,
+                    "description": "Heat to 62 °C",
+                    "tooltip": "Heat to 62 °C"
+                },
+                {
+                    "tooltip": "25 min @ 62 °C",
+                    "type": "mash",
+                    "duration": 1500,
+                    "name": "Beta amylase",
+                    "value": 62,
+                    "time": 3600,
+                    "description": "Beta amylase - 25 min @ 62 °C"
+                },
+                {
+                    "name": "alpha amylase",
+                    "tooltip": "Heat to 72 °C",
+                    "time": 2100,
+                    "type": "ramp",
+                    "duration": 0,
+                    "pauseBefore": true,
+                    "value": 72,
+                    "description": "Heat to 72 °C"
+                },
+                {
+                    "value": 72,
+                    "type": "mash",
+                    "name": "alpha amylase",
+                    "time": 2100,
+                    "tooltip": "25 min @ 72 °C",
+                    "description": "alpha amylase - 25 min @ 72 °C",
+                    "duration": 1500
+                },
+                {
+                    "name": "Sparge",
+                    "pauseBefore": false,
+                    "time": 900,
+                    "description": "<b>15 min</b>: Prepare <b>14.81 L</b> sparge water @ 76 °C",
+                    "priority": 8,
+                    "duration": 0,
+                    "value": 0,
+                    "type": "event"
+                },
+                {
+                    "tooltip": "Heat to 80 °C",
+                    "name": "Mash out",
+                    "value": 80,
+                    "type": "ramp",
+                    "duration": 0,
+                    "pauseBefore": true,
+                    "time": 600,
+                    "description": "Heat to 80 °C"
+                },
+                {
+                    "duration": 600,
+                    "value": 80,
+                    "name": "Mash out",
+                    "tooltip": "10 min @ 80 °C",
+                    "time": 600,
+                    "type": "mash",
+                    "description": "Mash out - 10 min @ 80 °C"
+                },
+                {
+                    "description": "Mashing Complete",
+                    "duration": 0,
+                    "type": "event",
+                    "pauseBefore": true,
+                    "time": 0,
+                    "priority": 10,
+                    "value": 0,
+                    "name": "Mash"
+                },
+                {
+                    "description": "Sparge with <b>14.81 L</b> water  @ 76 °C to reach pre-boil volume of <b>24.53 L</b>",
+                    "time": 0,
+                    "name": "Sparge",
+                    "value": 0,
+                    "duration": 0,
+                    "type": "event",
+                    "pauseBefore": true,
+                    "priority": 10
+                },
+                {
+                    "priority": 10,
+                    "name": "Sparge",
+                    "type": "event",
+                    "pauseBefore": true,
+                    "value": 0,
+                    "description": "Sparge Complete",
+                    "time": 0,
+                    "duration": 0
+                }
+            ],
+            "type": "tracker",
+            "position": 3900,
+            "duration": 3900,
+            "start": 1625462599399
+        },
+        {
+            "paused": true,
+            "position": 3600,
+            "name": "Boil",
+            "steps": [
+                {
+                    "description": "Start Boil Tracker",
+                    "type": "boil",
+                    "time": 3600,
+                    "pauseBefore": false,
+                    "priority": 10,
+                    "duration": 0,
+                    "name": "Start"
+                },
+                {
+                    "type": "event",
+                    "priority": 0,
+                    "tooltip": "60 min boil additions",
+                    "time": 3600,
+                    "description": "<b>60 min boil additions:</b></br> <i><b>4.3 g</b> Citra</i>",
+                    "pauseBefore": false
+                },
+                {
+                    "description": "<b>20 min boil additions:</b></br> <i><b>17 g</b> Citra</i>",
+                    "pauseBefore": false,
+                    "priority": 0,
+                    "tooltip": "20 min boil additions",
+                    "time": 1200,
+                    "type": "event"
+                },
+                {
+                    "description": "<b>10 min boil additions:</b></br> <i><b>25.5 g</b> Citra</i>",
+                    "time": 600,
+                    "tooltip": "10 min boil additions",
+                    "priority": 0,
+                    "pauseBefore": false,
+                    "type": "event"
+                },
+                {
+                    "duration": 0,
+                    "description": "End of Boil",
+                    "name": "Boil",
+                    "type": "event",
+                    "pauseBefore": true,
+                    "time": 0,
+                    "priority": 0
+                }
+            ],
+            "type": "tracker",
+            "step": 0,
+            "duration": 3600
+        },
+        {
+            "type": "tracker",
+            "duration": 1200,
+            "position": 1200,
+            "paused": true,
+            "steps": [
+                {
+                    "name": "Hop Stand",
+                    "description": "Start Hop Stand @ 80 °C",
+                    "time": 1200,
+                    "duration": 0,
+                    "type": "hopstand",
+                    "priority": 10,
+                    "value": 0,
+                    "pauseBefore": true
+                },
+                {
+                    "priority": 0,
+                    "type": "event",
+                    "time": 1200,
+                    "pauseBefore": false,
+                    "tooltip": "20 min hop stand additions",
+                    "description": "<b>20 min hop stand additions:</b></br> <i><b>34 g</b> Citra</i>"
+                },
+                {
+                    "value": 0,
+                    "time": 0,
+                    "description": "End of Hop Stand",
+                    "priority": 10,
+                    "type": "event",
+                    "name": "Hop Stand",
+                    "final": true,
+                    "duration": 0,
+                    "pauseBefore": true
+                }
+            ],
+            "name": "Hop Stand",
+            "step": 0
+        }
+    ]
+}

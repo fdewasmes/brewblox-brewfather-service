@@ -7,7 +7,7 @@ from os import getenv
 
 import pytest
 from aresponses import ResponsesMockServer
-from brewblox_service import http
+from brewblox_service import http, scheduler
 from brewblox_service.testing import response
 from brewblox_spark_api import blocks_api
 from mock import AsyncMock
@@ -58,9 +58,10 @@ def m_api_mqtt(mocker):
 
 @pytest.fixture
 def app(app, m_mqtt, m_api_mqtt):
-    app['BREWFATHER_USER_ID'] = getenv('BREWFATHER_USER_ID')
-    app['BREWFATHER_TOKEN'] = getenv('BREWFATHER_TOKEN')
+    app['BREWFATHER_USER_ID'] = '***REMOVED***'
+    app['BREWFATHER_TOKEN'] = '***REMOVED***'
 
+    scheduler.setup(app)
     http.setup(app)
     brewfather_automation.setup(app)
 
@@ -136,3 +137,10 @@ async def test_load_recipe(app, client, sample_recipe, aresponses: ResponsesMock
 
     await response(client.get('/recipe/id1/load'))
     aresponses.assert_plan_strictly_followed()
+
+
+async def test_get_batches(app, client):
+
+    data = await response(client.get('/batches?status=Brewing'))
+    print(data)
+
