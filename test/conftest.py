@@ -21,7 +21,7 @@ TEMP_ENV_VARS = {
 def log_enabled():
     """Sets log level to DEBUG for all test functions.
     Allows all logged messages to be captured during pytest runs"""
-    logging.getLogger().setLevel(logging.DEBUG)
+    logging.getLogger().setLevel(logging.INFO)
     logging.captureWarnings(True)
 
 
@@ -64,8 +64,7 @@ def event_loop(loop):
 @pytest.fixture
 def app(sys_args):
     parser = create_parser('default')
-    app = service.create_app(parser=parser, raw_args=sys_args[1:])
-    return app
+    return service.create_app(parser=parser, raw_args=sys_args[1:])
 
 
 @pytest.fixture

@@ -31,7 +31,6 @@ class DatastoreClient:
         self._settings = None
         self._mash_steps = None
 
-
     async def store_settings(self, settings: schemas.Settings):
         """ store automation settings in datastore for later use """
         LOGGER.debug(f'storing settings: {settings}')

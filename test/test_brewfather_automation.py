@@ -4,7 +4,6 @@ Checks whether we can call the hello endpoint.
 
 import json
 from os import getenv
-
 import pytest
 from aresponses import ResponsesMockServer
 from brewblox_service import http, scheduler
@@ -20,6 +19,20 @@ TESTED = brewfather_automation.__name__
 @pytest.fixture(scope='session')
 def sample_recipe():
     with open('test/sample_recipe.json') as json_file:
+        data = json.load(json_file)
+    return data
+
+
+@pytest.fixture(scope='session')
+def sample_batch():
+    with open('test/sample_batch.json') as json_file:
+        data = json.load(json_file)
+    return data
+
+
+@pytest.fixture(scope='session')
+def sample_brewtracker():
+    with open('test/sample_brewtracker.json') as json_file:
         data = json.load(json_file)
     return data
 
@@ -58,8 +71,8 @@ def m_api_mqtt(mocker):
 
 @pytest.fixture
 def app(app, m_mqtt, m_api_mqtt):
-    app['BREWFATHER_USER_ID'] = '***REMOVED***'
-    app['BREWFATHER_TOKEN'] = '***REMOVED***'
+    app['BREWFATHER_USER_ID'] = getenv('BREWFATHER_USER_ID')
+    app['BREWFATHER_TOKEN'] = getenv('BREWFATHER_TOKEN')
 
     scheduler.setup(app)
     http.setup(app)
@@ -110,24 +123,25 @@ async def test_get_recipes(app, client, aresponses: ResponsesMockServer):
     aresponses.assert_plan_strictly_followed()
 
 
-async def test_load_recipe(app, client, sample_recipe, aresponses: ResponsesMockServer):
+async def test_load_recipe(app, client, sample_batch, sample_brewtracker, aresponses: ResponsesMockServer):
     # Required to avoid spurious intercepts by aresponses
     aresponses.add(
-        path_pattern='/recipe/id1/load',
+        path_pattern='/load/id1',
         method_pattern='GET',
         response=aresponses.passthrough,
     )
     # Called by the /recipe/{id}/load endpoint
     aresponses.add(
         host_pattern='api.brewfather.app',
-        path_pattern='/v1/recipes/id1',
+        path_pattern='/v1/batches/id1',
         method_pattern='GET',
-        response=sample_recipe,
+        response=sample_batch,
     )
     aresponses.add(
-        path_pattern='/history/datastore/set',
-        method_pattern='POST',
-        response={},
+        host_pattern='api.brewfather.app',
+        path_pattern='/v1/batches/id1/brewtracker',
+        method_pattern='GET',
+        response=sample_brewtracker,
     )
     aresponses.add(
         path_pattern='/history/datastore/set',
@@ -135,12 +149,5 @@ async def test_load_recipe(app, client, sample_recipe, aresponses: ResponsesMock
         response={},
     )
 
-    await response(client.get('/recipe/id1/load'))
+    await response(client.get('/load/id1'))
     aresponses.assert_plan_strictly_followed()
-
-
-async def test_get_batches(app, client):
-
-    data = await response(client.get('/batches?status=Brewing'))
-    print(data)
-

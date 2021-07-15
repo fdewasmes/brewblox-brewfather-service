@@ -1,0 +1,250 @@
+{
+    "notify": true,
+    "completed": false,
+    "stages": [
+        {
+            "position": 300,
+            "step": 0,
+            "name": "Mash",
+            "start": 1626329336627,
+            "paused": true,
+            "steps": [
+                {
+                    "description": "Démarrer le tracker d'empâtage",
+                    "type": "mash",
+                    "time": 300,
+                    "priority": 10,
+                    "pauseBefore": false,
+                    "duration": 0,
+                    "name": "Start"
+                },
+                {
+                    "value": 52,
+                    "priority": 10,
+                    "duration": 0,
+                    "type": "event",
+                    "tooltip": "Faire chauffer à 56.6 °C",
+                    "description": "Faire chauffer <b>15.15 L</b> d'eau à 56.6 °C pour l'empâtage",
+                    "time": 300,
+                    "pauseBefore": true,
+                    "name": "Mash"
+                },
+                {
+                    "time": 300,
+                    "tooltip": "Ajout pour 5 min d'empâtage",
+                    "description": "<b>Ajout pour 5 min d'empâtage:</b></br> <i><b>1 g</b> Calcium Chloride (CaCl2)</i> </br><i><b>1 g</b> Canning Salt (NaCl)</i> </br><i><b>4 g</b> Gypsum (CaSO4)</i> </br><i><b>3 ml</b> Lactic Acid</i> </br><i><b>5.41 kg</b> Maris Otter</i>",
+                    "priority": 9,
+                    "pauseBefore": true,
+                    "type": "event"
+                },
+                {
+                    "type": "event",
+                    "value": 0,
+                    "name": "Sparge",
+                    "priority": 8,
+                    "duration": 0,
+                    "time": 300,
+                    "description": "<b></b>Préparez <b>14.81 L</b> d'eau de rinçage @ 76 °C",
+                    "pauseBefore": true
+                },
+                {
+                    "type": "mash",
+                    "name": "Protéolytique",
+                    "duration": 60,
+                    "tooltip": "1 min @ 52 °C",
+                    "description": "Protéolytique - 1 min @ 52 °C",
+                    "value": 52,
+                    "time": 300
+                },
+                {
+                    "value": 62,
+                    "duration": 0,
+                    "description": "Faire chauffer à 62 °C",
+                    "time": 240,
+                    "name": "Beta amylase",
+                    "tooltip": "Faire chauffer à 62 °C",
+                    "type": "ramp",
+                    "pauseBefore": true
+                },
+                {
+                    "time": 240,
+                    "type": "mash",
+                    "name": "Beta amylase",
+                    "value": 62,
+                    "tooltip": "2 min @ 62 °C",
+                    "duration": 120,
+                    "description": "Beta amylase - 2 min @ 62 °C"
+                },
+                {
+                    "name": "alpha amylase",
+                    "type": "ramp",
+                    "pauseBefore": true,
+                    "duration": 0,
+                    "tooltip": "Faire chauffer à 72 °C",
+                    "time": 120,
+                    "description": "Faire chauffer à 72 °C",
+                    "value": 72
+                },
+                {
+                    "time": 120,
+                    "duration": 60,
+                    "description": "alpha amylase - 1 min @ 72 °C",
+                    "type": "mash",
+                    "value": 72,
+                    "name": "alpha amylase",
+                    "tooltip": "1 min @ 72 °C"
+                },
+                {
+                    "value": 80,
+                    "description": "Faire chauffer à 80 °C",
+                    "pauseBefore": true,
+                    "tooltip": "Faire chauffer à 80 °C",
+                    "duration": 0,
+                    "time": 60,
+                    "type": "ramp",
+                    "name": "Mash out"
+                },
+                {
+                    "time": 60,
+                    "description": "Mash out - 1 min @ 80 °C",
+                    "name": "Mash out",
+                    "tooltip": "1 min @ 80 °C",
+                    "value": 80,
+                    "type": "mash",
+                    "duration": 60
+                },
+                {
+                    "time": 0,
+                    "name": "Mash",
+                    "pauseBefore": true,
+                    "priority": 10,
+                    "value": 0,
+                    "description": "Empâtage terminé",
+                    "type": "event",
+                    "duration": 0
+                },
+                {
+                    "duration": 0,
+                    "description": "Rincer avec <b>14.81 L</b> d'eau  @ 76 °C pour atteindre un volume de pré-ébullition de <b>24.53 L</b>",
+                    "name": "Sparge",
+                    "value": 0,
+                    "type": "event",
+                    "pauseBefore": true,
+                    "time": 0,
+                    "priority": 10
+                },
+                {
+                    "name": "Sparge",
+                    "value": 0,
+                    "type": "event",
+                    "description": "Rinçage terminé",
+                    "duration": 0,
+                    "pauseBefore": true,
+                    "priority": 10,
+                    "time": 0
+                }
+            ],
+            "type": "tracker",
+            "duration": 300
+        },
+        {
+            "paused": true,
+            "name": "Boil",
+            "type": "tracker",
+            "position": 3600,
+            "steps": [
+                {
+                    "name": "Start",
+                    "duration": 0,
+                    "priority": 10,
+                    "description": "Démarrer le tracker d'ébullition",
+                    "time": 3600,
+                    "type": "boil",
+                    "pauseBefore": false
+                },
+                {
+                    "time": 3600,
+                    "pauseBefore": false,
+                    "priority": 0,
+                    "description": "<b>Ajout pour 60 min d’ébullition:</b></br> <i><b>4.3 g</b> Citra</i>",
+                    "type": "event",
+                    "tooltip": "Ajout pour 60 min d’ébullition"
+                },
+                {
+                    "pauseBefore": false,
+                    "description": "<b>Ajout pour 20 min d’ébullition:</b></br> <i><b>17 g</b> Citra</i>",
+                    "time": 1200,
+                    "priority": 0,
+                    "tooltip": "Ajout pour 20 min d’ébullition",
+                    "type": "event"
+                },
+                {
+                    "tooltip": "Ajout pour 10 min d’ébullition",
+                    "time": 600,
+                    "description": "<b>Ajout pour 10 min d’ébullition:</b></br> <i><b>25.5 g</b> Citra</i>",
+                    "priority": 0,
+                    "pauseBefore": false,
+                    "type": "event"
+                },
+                {
+                    "time": 0,
+                    "type": "event",
+                    "priority": 0,
+                    "duration": 0,
+                    "pauseBefore": true,
+                    "name": "Boil",
+                    "description": "Ebullition terminée"
+                }
+            ],
+            "duration": 3600,
+            "step": 0
+        },
+        {
+            "position": 1200,
+            "paused": true,
+            "steps": [
+                {
+                    "pauseBefore": true,
+                    "type": "hopstand",
+                    "name": "Hop Stand",
+                    "priority": 10,
+                    "description": "Démarrer le Hop Stand @ 80 °C",
+                    "duration": 0,
+                    "time": 1200,
+                    "value": 0
+                },
+                {
+                    "pauseBefore": false,
+                    "type": "event",
+                    "description": "<b>Ajout hopstand pour 20 min:</b></br> <i><b>34 g</b> Citra</i>",
+                    "time": 1200,
+                    "tooltip": "Ajout hopstand pour 20 min",
+                    "priority": 0
+                },
+                {
+                    "description": "Fin du houblonnage Hors Flamme",
+                    "duration": 0,
+                    "value": 0,
+                    "final": true,
+                    "name": "Hop Stand",
+                    "type": "event",
+                    "time": 0,
+                    "pauseBefore": true,
+                    "priority": 10
+                }
+            ],
+            "name": "Hop Stand",
+            "duration": 1200,
+            "step": 0,
+            "type": "tracker"
+        }
+    ],
+    "stage": 0,
+    "_rev": "KTZwrhUEzUUo1UCqTSZGBOFm0W9Lvz",
+    "alarm": true,
+    "active": false,
+    "_id": "BDxjSu7vYe20qKSH45kLCJZqG1b1AR",
+    "enabled": true,
+    "hidden": false,
+    "name": "Brassin #8"
+}

@@ -90,10 +90,7 @@ class BrewfatherFeature(repeater.RepeaterFeature):
     async def restore_timer(self):
         """ restores timer if need be. This can happen in several situations when we loose connection or power """
         state = await self.get_state()
-        if (
-            state.automation_state == AutomationState.REST
-            and self.timer_task is None
-        ):
+        if state.automation_state == AutomationState.REST and self.timer_task is None:
             LOGGER.warn('missing a timer for rest state. Recreating one from currently known state.')
 
             if state.timer is None or state.timer.expected_end_time is None:
